@@ -98,8 +98,6 @@ axis image
 viscircles([0.3 0.3], 0.1, 'EdgeColor', 'r', 'LineWidth', 1.5);
 viscircles([0.7 0.7], 0.1, 'EdgeColor', 'r', 'LineWidth', 1.5);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % note that the flux of region here has not been taken logrithm
 flux_region = zeros(num, 1);
 area_region = zeros(num, 1);
@@ -108,88 +106,24 @@ for i = 1:num
     flux_region(i) = sum(area_cell(init_sets{i}).*exp(flux(init_sets{i})))/area_region(i);
 end
 
-% get the connectivity among regions
-adj_mat_region = zeros(num);
-for i = 1:num-1
-    for j = i+1:num
-        adj_mat_region(i, j) = check_connect(i, j, init_sets, adj_mat);
-        adj_mat_region(j, i) = adj_mat_region(i, j);
-    end
-end
-
-% construct a region merging tree structure
-% t represents the index of region merging
-region_set = 1:num;
-rec_min_diff = zeros(num-1, 1);
-rec_sets = cell(num-1, 1);
-rec_sets{1} = init_sets;
-for t = 1:num-1
-    % find the pair of regions with minimal flux difference
-    min_diff = realmax;
-    for i = region_set
-        for j = region_set
-            if i<j && adj_mat_region(i, j) && abs(flux_region(i)-flux_region(j))<min_diff
-                min_diff = abs(flux_region(i)-flux_region(j));
-                merge1 = i;
-                merge2 = j;
-            end
-        end
-    end
-    % del merge2 from region_set since it will be merged with set merge1
-    region_set(region_set==merge2) = [];
-    % the i-th element of rec_min_diff represents the min diff when there
-    % are i+1 regions
-    rec_min_diff(num-t) = min_diff;
-    % merge two regions
-    flux_region(merge1) = (area_region(merge1)*flux_region(merge1)+area_region(merge2)*flux_region(merge2))/...
-        (area_region(merge1)+area_region(merge2));
-    area_region(merge1) = area_region(merge1)+area_region(merge2);
-    % update the connectivity
-    for i = 1:num
-        if adj_mat_region(merge2, i)
-            adj_mat_region(merge1, i) = 1;
-            adj_mat_region(i, merge1) = 1;
-        end
-    end
-    % record the merged sets
-    tmp = rec_sets{t};
-    tmp{merge1} = [tmp{merge1} tmp{merge2}];
-    tmp{merge2} = [];
-    % the t-th element of rec_sets represents the clustering when there are
-    % num-t+1 regions
-    rec_sets{t+1} = tmp;
-end
-
-% decide threshold by L-method
+% source detection
+% to remove false positive
 figure
-plot(2:num, rec_min_diff, '.')
-min_rmse = realmax;
-for c = 3:num-2
-    [b1, ~, r1] = regress(rec_min_diff(1:c-1), [ones(c-1, 1) (2:c)']);
-    [b2, ~, r2] = regress(rec_min_diff(c:num-1), [ones(num-c, 1), (c+1:num)']);
-    rmse1 = sqrt(mean(r1.^2));
-    rmse2 = sqrt(mean(r2.^2));
-    rmse = (c-1)/(num-1)*rmse1+(num-c)/(num-1)*rmse2;
-    if rmse<min_rmse
-        min_rmse = rmse;
-        % stop merging when there are knee regions
-        knee = c;
-        b1_min = b1;
-        b2_min = b2;
-    end
-end
-hold on
-plot(2:knee, b1_min(1)+b1_min(2)*(2:knee), 'r')
-plot(knee+1:num, b2_min(1)+b2_min(2)*(knee+1:num), 'g')
+h_bp = boxplot(flux_region);
+h_ol = findobj(h_bp, 'Tag', 'Outliers');
+ols = get(h_ol, 'YData');
+n_ol = length(ols);
 
+% plot
 figure
 triplot(DT)
 hold on
-% the final result
-selected = rec_sets{num-knee+1};
-for i = 1:num
-    if ~isempty(selected{i})
-        scatter(cx(selected{i}), cy(selected{i}), [],  colors(i, :), 'filled')
-    end
+for i = 1:n_ol
+    index_region = find(flux_region==(ols(i)));
+    scatter(cx(init_sets{index_region}), cy(init_sets{index_region}), [],  colors(index_region, :), 'filled')
 end
 axis image
+viscircles([0.3 0.3], 0.1, 'EdgeColor', 'r', 'LineWidth', 1.5);
+viscircles([0.7 0.7], 0.1, 'EdgeColor', 'r', 'LineWidth', 1.5);
+
+
