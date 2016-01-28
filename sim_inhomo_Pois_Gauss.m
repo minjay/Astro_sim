@@ -8,7 +8,7 @@ n_s = length(sigma);
 max_iter = 1e3;
 for i = 1:n_s
     rand_num = mvnrnd(loc(i, :)', sigma(i)^2*eye(2), max_iter);
-    index = find(rand_num(:, 1)>=0 & rand_num(:, 1)<=1 & rand_num(:, 2) & rand_num(:, 2)<=1);
+    index = find(rand_num(:, 1)>=range_x(1) & rand_num(:, 1)<=range_x(2) & rand_num(:, 2)>=range_y(1) & rand_num(:, 2)<=range_y(2));
     index = index(1:num(i));
     rand_num = rand_num(index, :);
     X = [X; rand_num];
