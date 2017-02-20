@@ -8,6 +8,7 @@ function X = sim_homo_Pois(range_x, range_y, lambda, seed)
 % seed: random seed
 %
 % Output variables:
+%
 % X: an n-by-2 matrix, where each row represents the location of one of the 
 % points
 
