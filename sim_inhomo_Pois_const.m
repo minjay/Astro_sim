@@ -1,5 +1,5 @@
 function X = sim_inhomo_Pois_const(range_x, range_y, lambda, loc, radius, num, seed)
-% simulate an inhomogeneous Poisson process with two homogeneous, 
+% simulate an inhomogeneous Poisson process with several homogeneous, 
 % round-shaped extended sources
 % 
 % Input variables:
