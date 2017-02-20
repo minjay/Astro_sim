@@ -14,7 +14,10 @@ function X = sim_homo_Pois(range_x, range_y, lambda, seed)
 
 len_x = range_x(2)-range_x(1);
 len_y = range_y(2)-range_y(1);
-rng(seed)
+
+if nargin==4
+    rng(seed)
+end
 % n represents the number of points, which follows a Poisson distribution
 n = poissrnd(len_x*len_y*lambda);
 % X is an n-by-2 matrix, where each row represents the location of one of
