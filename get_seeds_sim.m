@@ -25,7 +25,8 @@ n = length(cx);
 
 % counter of number of seeds
 num_s = 0;
-seeds = [];
+% empty cell
+seeds = {};
 
 % set of points that have been selected
 unselected_points = 1:n;
