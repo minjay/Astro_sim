@@ -31,7 +31,7 @@ seeds = {};
 % set of points that have not been selected
 unselected_points = 1:n;
 % set of points that are on the boundary
-invalid = find(isnan(cell_log_intensity))';
+invalid = find(isnan(cell_log_intensity));
 unselected_points = setdiff(unselected_points, invalid);
 
 % place seeds uniformly
