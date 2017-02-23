@@ -28,7 +28,7 @@ num_s = 0;
 % empty cell
 seeds = {};
 
-% set of points that have been selected
+% set of points that have not been selected
 unselected_points = 1:n;
 % set of points that are on the boundary
 invalid = find(isnan(cell_log_intensity))';
