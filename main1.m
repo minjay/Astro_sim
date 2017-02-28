@@ -58,14 +58,6 @@ axis image
 % compute the log-likelihood of the over-segmented graph before region merging
 log_like = get_metric_value('log-like', n, region_sets, region_area, region_intensity, region_num_cells);
 
-sets_tmp = sets_all{2};
-sets_tmp(11) = [];
-% compute the intensity of regions and the connectivity among regions
-[region_intensity, region_area, region_num_cells, adj_mat_region] =...
-    get_region_int_connect(num-1, cell_area, cell_log_intensity, sets_tmp, adj_mat);
-
-log_like = get_metric_value('log-like', n, sets_tmp, region_area, region_intensity, region_num_cells);
-
 % construct a region merging tree
 % t represents the iter # of region merging
 region_indices = 1:num;
@@ -127,10 +119,12 @@ figure
 triplot(DT)
 hold on
 % the final result
-selected = sets_all{17};
+selected = sets_all{24};
+index = 0;
 for i = 1:num
     if ~isempty(selected{i})
-        scatter(cx(selected{i}), cy(selected{i}), [],  colors(i, :), 'filled')
+        index = index+1;
+        scatter(cx(selected{i}), cy(selected{i}), [],  colors(index, :), 'filled')
     end
 end
 axis image
