@@ -18,12 +18,14 @@ function value = get_metric_value(metric, N, region_sets, region_area, region_in
 K = length(region_sets);
 
 log_like = -sum(log(1:N));
-for i = 1:K
-    log_like = log_like+region_num_cells(i)*log(region_intensity(i))-...
-        region_intensity(i)*region_area(i);
+for k = 1:K
+    log_like = log_like+region_num_cells(k)*log(region_intensity(k))-...
+        region_intensity(k)*region_area(k);
 end
 
 if strcmp(metric, 'BIC')
+    % use number of regions as number of free parameters
+    % this model complexity penalty is not large enough
     value = -2*log_like+K*log(N);
 elseif strcmp(metric, 'log-like')
     value = log_like;
