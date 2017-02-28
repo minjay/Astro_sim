@@ -1,129 +1,136 @@
 clear
 close all
 
-% X = sim_inhomo_Pois_const([0 1], [0 1], 200, [0.3 0.3; 0.7 0.7], [0.1 0.1], [50 50]);
-
 % generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_Gauss([0 1], [0 1], 200, [0.3 0.3; 0.7 0.7], [0.05 0.05], [50 50]);
+% there is only one extended source
+X = sim_inhomo_Pois_Gauss([0 1], [0 1], 200, [0.5 0.5], 0.1, 200, 1);
 
-cx = X(:, 1);
-cy = X(:, 2);
-DT = delaunayTriangulation([cx cy]);
+% init comp
+[cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X);
+
+% plot log intensity
 figure
 triplot(DT)
-
-[V, R] = voronoiDiagram(DT);
-E = edges(DT);
-
+hold on
+scatter(cx, cy, [], cell_log_intensity, 'o', 'filled')
+colorbar
+colormap(jet)
 axis image
 
-n = length(cx);
-flux = zeros(n, 1);
-area_cell = zeros(n, 1);
-for i = 1:n
-    area_cell(i) = polyarea(V(R{i}, 1), V(R{i}, 2));
-    flux(i) = 1/area_cell(i);
-end
+% get seeds
+[seeds, num, invalid] = get_seeds_sim(0.1, 0.9, 0.1, 0.9,...
+    0.2, 0.2, 3, cell_log_intensity, cx, cy);
 
-% apply logrithm to fluxes so that the bump is somewhat flattened
-flux = log(flux);
-
-hold on
-scatter(cx, cy, [], flux, 'o', 'filled')
-colorbar
-
-num = 0;
-index_set = [];
-% union_index_set records the points that have been chosen
-union_index_set = [];
-% the points (on the boundary) need to be excluded during the process of
-% G-SRG
-invalid = find(isnan(flux))';
-for i = 0.1:0.2:0.9
-    for j = 0.1:0.2:0.9
-        dist = (cx-i).^2+(cy-j).^2;
-        % sort them ascendingly
-        [~, index] = sort(dist);
-        num = num+1;
-        index_set{num} = [];
-        % recording the number of points needed for each init region set
-        times = 0;
-        for k = 1:n
-            % choose the points that are not on the boundary and have not
-            % been chosen yet
-            if ~ismember(index(k), union(invalid, union_index_set))
-                times = times+1;
-                index_set{num} = [index_set{num} index(k)];
-                union_index_set = [union_index_set index(k)];
-            end
-            % the size of each init region set
-            % it could happen that there are not enough points to be
-            % assigned when the background is very sparse
-            if times==5
-                break
-            end
-        end
-    end
-end    
-
-% plot of the seeds
+% plot the seeds
 figure
 triplot(DT)
 hold on
 % specify the colormap
 colors = lines(num);
 for i = 1:num
-    scatter(cx(index_set{i}), cy(index_set{i}), [], colors(i, :), '*')
+    scatter(cx(seeds{i}), cy(seeds{i}), [], colors(i, :), '*')
 end
 axis image
 
-% keep the variable index_set and copy it to the variable init_sets
-init_sets = cell(num, 1);
-for i = 1:num
-    init_sets{i} = index_set{i};
-end
+% make a copy of variable seeds
+region_sets = seeds;
 
 % graph-based SRG
 adj_mat = get_adj_mat( E, n );
-[init_sets, labeled_set] = SRG_graph( init_sets, flux, area_cell, n, adj_mat, invalid);
+[region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid');
 
-% plot
+% plot the over-segmented image
 figure
 triplot(DT)
 hold on
 for i = 1:num
-    scatter(cx(init_sets{i}), cy(init_sets{i}), [],  colors(i, :), 'filled')
+    scatter(cx(region_sets{i}), cy(region_sets{i}), [],  colors(i, :), 'filled')
 end
+viscircles([0.5 0.5], 0.2, 'EdgeColor', 'r', 'LineWidth', 1.5);
 axis image
-viscircles([0.3 0.3], 0.1, 'EdgeColor', 'r', 'LineWidth', 1.5);
-viscircles([0.7 0.7], 0.1, 'EdgeColor', 'r', 'LineWidth', 1.5);
 
-% note that the flux of region here has not been taken logrithm
-flux_region = zeros(num, 1);
-area_region = zeros(num, 1);
-for i = 1:num
-    area_region(i) = sum(area_cell(init_sets{i}));
-    flux_region(i) = sum(area_cell(init_sets{i}).*exp(flux(init_sets{i})))/area_region(i);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% compute the intensity of regions and the connectivity among regions
+[region_intensity, region_area, region_num_cells, adj_mat_region] =...
+    get_region_int_connect(num, cell_area, cell_log_intensity, region_sets, adj_mat);
+
+% compute the log-likelihood of the over-segmented graph before region merging
+log_like = get_metric_value('log-like', n, region_sets, region_area, region_intensity, region_num_cells);
+
+sets_tmp = sets_all{2};
+sets_tmp(11) = [];
+% compute the intensity of regions and the connectivity among regions
+[region_intensity, region_area, region_num_cells, adj_mat_region] =...
+    get_region_int_connect(num-1, cell_area, cell_log_intensity, sets_tmp, adj_mat);
+
+log_like = get_metric_value('log-like', n, sets_tmp, region_area, region_intensity, region_num_cells);
+
+% construct a region merging tree
+% t represents the iter # of region merging
+region_indices = 1:num;
+log_like_all = zeros(num, 1);
+log_like_all(1) = log_like;
+sets_all = cell(num, 1);
+sets_all{1} = region_sets;
+for t = 1:num-1
+    % find the pair of regions with the maximal log-likelihood increasement
+    max_inc = -realmax;
+    for i = region_indices
+        for j = region_indices
+            if i<j && adj_mat_region(i, j)
+                numerator = region_intensity(i)*region_area(i)+region_intensity(j)*region_area(j);
+                sum_area = region_area(i)+region_area(j);
+                delta_log_like = region_num_cells(i)*log(numerator/region_intensity(i)/sum_area)+...
+                    region_num_cells(j)*log(numerator/region_intensity(j)/sum_area);
+                % delta_log_like is defined as new log-like minus old
+                % log-like
+                % the larger, the better
+                if delta_log_like>max_inc
+                    max_inc = delta_log_like;
+                    merge_region1 = i;
+                    merge_region2 = j;
+                end
+            end
+        end
+    end
+    % del merge_region2 from region_indices since it will be merged with merge_region1
+    region_indices(region_indices==merge_region2) = [];
+    % update log-likelihood
+    log_like_all(t+1) = log_like_all(t)+max_inc;
+    % merge merge_region1 and merge_region2
+    % only keep merge_region1
+    region_intensity(merge_region1) = (region_intensity(merge_region1)*region_area(merge_region1)+...
+        region_intensity(merge_region2)*region_area(merge_region2))/...
+        (region_area(merge_region1)+region_area(merge_region2));
+    region_area(merge_region1) = region_area(merge_region1)+region_area(merge_region2);
+    region_num_cells(merge_region1) = region_num_cells(merge_region1)+region_num_cells(merge_region2);
+    % update the connectivity
+    index = setdiff(find(adj_mat_region(merge_region2, :)==1), merge_region1);
+    adj_mat_region(merge_region1, index) = 1;
+    adj_mat_region(index, merge_region1) = 1;
+    % record the sets after region merging
+    tmp = sets_all{t};
+    tmp{merge_region1} = [tmp{merge_region1} tmp{merge_region2}];
+    tmp{merge_region2} = [];
+    sets_all{t+1} = tmp;
 end
 
-% source detection
-% to remove false positive
 figure
-h_bp = boxplot(flux_region);
-h_ol = findobj(h_bp, 'Tag', 'Outliers');
-ols = get(h_ol, 'YData');
-n_ol = length(ols);
+plot(log_like_all, '-o')
 
-% plot
+BIC_all = -2*log_like_all+(num:-1:1)'*log(n);
+figure
+plot(BIC_all, '-o')
+
 figure
 triplot(DT)
 hold on
-for i = 1:n_ol
-    index_region = find(flux_region==(ols(i)));
-    scatter(cx(init_sets{index_region}), cy(init_sets{index_region}), [],  colors(index_region, :), 'filled')
+% the final result
+selected = sets_all{17};
+for i = 1:num
+    if ~isempty(selected{i})
+        scatter(cx(selected{i}), cy(selected{i}), [],  colors(i, :), 'filled')
+    end
 end
 axis image
-viscircles([0.3 0.3], 0.1, 'EdgeColor', 'r', 'LineWidth', 1.5);
-viscircles([0.7 0.7], 0.1, 'EdgeColor', 'r', 'LineWidth', 1.5);
-
-
