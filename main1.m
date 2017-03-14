@@ -6,7 +6,7 @@ close all
 X = sim_inhomo_Pois_Gauss([0 1], [0 1], 200, [0.5 0.5], 0.1, 200, 1);
 
 % init comp
-[cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X);
+[cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1]);
 
 % plot log intensity
 figure
