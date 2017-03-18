@@ -1,4 +1,4 @@
-function X = sim_inhomo_Pois_const(range_x, range_y, lambda, loc, radius, num, seed)
+function X = sim_inhomo_Pois_const(range_x, range_y, lambda, loc, radius, num, seed, show_plot)
 % simulate an inhomogeneous Poisson process with several homogeneous, 
 % round-shaped extended sources
 % 
@@ -11,6 +11,7 @@ function X = sim_inhomo_Pois_const(range_x, range_y, lambda, loc, radius, num, s
 % radius: radius of sources
 % num: number of points/photons in each source
 % seed: random seed
+% show_plot: whether show plot
 %
 % Output variables:
 %
@@ -20,7 +21,12 @@ function X = sim_inhomo_Pois_const(range_x, range_y, lambda, loc, radius, num, s
 %
 % X = sim_inhomo_Pois_const([0 1], [0 1], 100, [0.3 0.3; 0.7 0.7], [0.1 0.1], [100 100]);
 
-if nargin==7
+if nargin==6
+    show_plot = false;
+elseif nargin==7
+    rng(seed)
+    show_plot = false;
+elseif nargin==8
     rng(seed)
 end
 
@@ -43,8 +49,10 @@ for i = 1:n_s
     X = [X; rand_num];
 end
 
-figure
-scatter(X(:, 1), X(:, 2), '.')
-axis square
+if show_plot
+    figure
+    scatter(X(:, 1), X(:, 2), '.')
+    axis square
+end
 
 end
