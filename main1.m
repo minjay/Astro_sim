@@ -49,7 +49,7 @@ hold on
 for i = 1:num
     scatter(cx(region_sets{i}), cy(region_sets{i}), [],  colors(i, :), 'filled')
 end
-viscircles([0.5 0.5], 0.2, 'EdgeColor', 'r', 'LineWidth', 1.5);
+viscircles([0.5 0.5], 0.25, 'EdgeColor', 'r', 'LineWidth', 1.5);
 axis image
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,4 +80,5 @@ for i = 1:num
         scatter(cx(selected{i}), cy(selected{i}), [],  colors(index, :), 'filled')
     end
 end
+viscircles([0.5 0.5], 0.25, 'EdgeColor', 'r', 'LineWidth', 1.5);
 axis image
