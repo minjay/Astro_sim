@@ -1,9 +1,11 @@
+% numerical experiment 1
+% one round-shaped extended source
+
 clear
 close all
 
 % generate simulated data (inhomogeneous Poisson point process)
-% there is only one extended source
-X = sim_inhomo_Pois_Gauss([0 1], [0 1], 200, [0.5 0.5], 0.1, 200, 1);
+X = sim_inhomo_Pois_const([0 1], [0 1], 1000, [0.5 0.5], 0.25, 200);
 
 % init comp
 [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1]);
@@ -19,7 +21,8 @@ axis image
 
 % get seeds
 [seeds, num, invalid] = get_seeds_sim(0.1, 0.9, 0.1, 0.9,...
-    0.2, 0.2, 3, cell_log_intensity, cx, cy);
+    0.2, 0.2, 5, cell_log_intensity, cell_area, cx, cy, 2);
+disp(['Number of regions is ', num2str(num)])
 
 % plot the seeds
 figure
@@ -57,15 +60,19 @@ axis image
 figure
 plot(log_like_all, '-o')
 
-BIC_all = -2*log_like_all+(num:-1:1)'*log(n);
+BIC_all = -2*log_like_all+6*(num-1:-1:0)'*log(n);
 figure
-plot(BIC_all, '-o')
+plot(num-1:-1:0, BIC_all, '-o')
+xlabel('Number of clusters/sources')
+ylabel('BIC')
+
+[~, index_BIC] = min(BIC_all);
 
 figure
 triplot(DT)
 hold on
 % the final result
-selected = sets_all{24};
+selected = sets_all{index_BIC};
 index = 0;
 for i = 1:num
     if ~isempty(selected{i})
