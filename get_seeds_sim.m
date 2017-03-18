@@ -1,5 +1,5 @@
 function [seeds, num_s, invalid] = get_seeds_sim(st_x, en_x, st_y, en_y,...
-    step_x, step_y, set_size, cell_log_intensity, cx, cy, ratio)
+    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor)
 % get initial seeds, which are uniformly spreaded in the region
 %
 % Input variables:
@@ -12,9 +12,10 @@ function [seeds, num_s, invalid] = get_seeds_sim(st_x, en_x, st_y, en_y,...
 % step_y: the step size of y
 % set_size: the size of each seed set
 % cell_log_intensity: the log intensity of voronoi cells
+% cell_area: the area of voronoi cells
 % cx: the x coordinate of points
 % cy: the y coordinate of points
-% ratio: it is used to multiply max_range
+% factor: the factor alpha that determines the width of the interval
 %
 % Output variables:
 %
@@ -57,22 +58,20 @@ for i = st_x:step_x:en_x
     end
 end  
 
-% compute the max diff of log intensity
-% NaN is excluded while computing max/min
-max_range = max(cell_log_intensity)-min(cell_log_intensity);
-% set the threshold as max diff multiplied by a ratio
-thres = ratio*max_range;
-seeds_tmp = seeds;
-num_s_tmp = num_s;
-seeds = {};
-num_s = 0;
 % seed rejection
-for i = 1:num_s_tmp
-    seed_range = max(cell_log_intensity(seeds_tmp{i}))-min(cell_log_intensity(seeds_tmp{i}));
-    if seed_range<=thres
-        num_s = num_s+1;
-        seeds{num_s} = seeds_tmp{i};
+index = [];
+for i = 1:num_s
+    areas = cell_area(seeds{i});
+    lambda_inv = mean(areas);
+    std_area = 0.53*lambda_inv;
+    max_range = 2*factor*std_area;
+    seed_range = max(areas)-min(areas);
+    if seed_range>max_range
+        index = [index i];
     end
 end
+% remove
+seeds(index) = [];
+num_s = num_s-length(index);
 
 end
