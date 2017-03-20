@@ -7,11 +7,16 @@ close all
 rng(1)
 T = 10;
 n_source = zeros(T, 1);
+lambda = 1000;
+loc = [0.5 0.5];
+radius = 0.25;
+num_of_photon = 200;
+metric_all = zeros(T, 7);
 
 for t = 1:T
     disp(['The ', num2str(t), '-th repetition'])
     % generate simulated data (inhomogeneous Poisson point process)
-    X = sim_inhomo_Pois_const([0 1], [0 1], 1000, [0.5 0.5], 0.25, 200);
+    X = sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, num_of_photon);
 
     % init comp
     [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1]);
@@ -34,4 +39,16 @@ for t = 1:T
     BIC_all = -2*log_like_all+6*(num-1:-1:0)'*log(n);
     [~, index_BIC] = min(BIC_all);
     n_source(t) = num-index_BIC;
+    
+    % we assume that the number of sources is correct
+    selected = sets_all{num-length(radius)};
+    % remove empty cell array elements
+    selected = selected(~cellfun(@isempty, selected));
+    
+    [dr, far, err, res_source_area_sort, source_x, source_y, n_S_correct] =...
+        perf_eval(length(radius), loc, radius, num_of_photon, cx, cy, selected, cell_log_intensity, cell_area);
+    metric_all(t, :) = [dr far err res_source_area_sort source_x source_y n_S_correct];
 end
+
+% print out the metric matrix with column names
+dataset({metric_all 'DR', 'FAR', 'ERR', 'Area', 'X',  'Y', 'NumOfPhotons'})
