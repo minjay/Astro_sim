@@ -59,4 +59,4 @@ parfor t = 1:T
 end
 
 save(['main2_rep_lambda_', num2str(lambda), '_num_', num2str(num_of_photon_one), '.mat'],...
-    'metric_all_frame', 'n_source', 'loc', 'radius', 'num_of_photon')
+    'metric_all', 'n_source', 'loc', 'radius', 'num_of_photon')
