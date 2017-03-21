@@ -55,4 +55,4 @@ end
 % print out the metric matrix with column names
 metric_all_frame = dataset({metric_all 'DR', 'FAR', 'ERR', 'Area', 'X',  'Y', 'NumOfPhotons'});
 
-save('main1_rep.mat', 'metric_all_frame', 'loc', 'radius', 'num_of_photon')
+save('main1_rep.mat', 'metric_all_frame', 'n_source', 'loc', 'radius', 'num_of_photon')
