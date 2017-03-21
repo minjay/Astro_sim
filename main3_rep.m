@@ -6,14 +6,9 @@ addpath(genpath('/home/minjay/G-SRG'))
 rng(1)
 T = 500;
 n_source = zeros(T, 1);
-loc = [];
-for i = 1:4
-    for j = 1:4
-        loc = [loc; i*0.2 j*0.2];
-    end
-end
-radius = 0.05*ones(1, 16);
-num_of_photon = num_of_photon_one*ones(1, 16);
+loc = [0.3 0.3; 0.5 0.7; 0.7 0.3];
+radius = [0.15 0.1 0.05];
+num_of_photon = num_of_photon_one*ones(1, 3);
 metric_all = cell(T, 1);
 
 parfor t = 1:T
