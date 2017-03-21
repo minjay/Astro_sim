@@ -48,7 +48,7 @@ for t = 1:T
     selected = selected(~cellfun(@isempty, selected));
     
     [dr, far, err, res_source_area_sort, source_x, source_y, n_S_correct] =...
-        perf_eval(length(radius), loc, radius, num_of_photon, cx, cy, selected, cell_log_intensity, cell_area);
+        perf_eval(length(radius), loc, radius, cx, cy, selected, cell_log_intensity, cell_area);
     metric_all((t-1)*length(radius)+1:t*length(radius), :) = [dr far err res_source_area_sort source_x source_y n_S_correct];
 end
 
