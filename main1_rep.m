@@ -51,4 +51,6 @@ for t = 1:T
 end
 
 % print out the metric matrix with column names
-dataset({metric_all 'DR', 'FAR', 'ERR', 'Area', 'X',  'Y', 'NumOfPhotons'})
+metric_all_frame = dataset({metric_all 'DR', 'FAR', 'ERR', 'Area', 'X',  'Y', 'NumOfPhotons'});
+
+save('main1_rep.mat', 'metric_all_frame', 'loc', 'radius', 'num_of_photon')
