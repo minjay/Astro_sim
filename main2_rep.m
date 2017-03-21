@@ -9,10 +9,16 @@ addpath(genpath('/home/minjay/G-SRG'))
 rng(1)
 T = 500;
 n_source = zeros(T, 1);
-lambda = 1000;
-loc = [0.5 0.5];
-radius = 0.25;
-num_of_photon = 200;
+lambda = 2000;
+loc = [];
+for i = 1:4
+    for j = 1:4
+        loc = [loc; i*0.2 j*0.2];
+    end
+end
+radius = 0.05*ones(1, 16);
+num_of_photon_one = 50;
+num_of_photon = num_of_photon_one*ones(1, 16);
 metric_all = zeros(T*length(radius), 7);
 
 for t = 1:T
@@ -25,7 +31,7 @@ for t = 1:T
 
     % get seeds
     [seeds, num, invalid] = get_seeds_sim(0.1, 0.9, 0.1, 0.9,...
-        0.2, 0.2, 5, cell_log_intensity, cell_area, cx, cy, 2);
+        0.1, 0.1, 5, cell_log_intensity, cell_area, cx, cy, 2);
     disp(['Number of regions is ', num2str(num)])
 
     % make a copy of variable seeds
@@ -48,11 +54,12 @@ for t = 1:T
     selected = selected(~cellfun(@isempty, selected));
     
     [dr, far, err, res_source_area_sort, source_x, source_y, n_S_correct] =...
-        perf_eval(length(radius), loc, radius, num_of_photon, cx, cy, selected, cell_log_intensity, cell_area);
+        perf_eval(length(radius), loc, radius, cx, cy, selected, cell_log_intensity, cell_area);
     metric_all((t-1)*length(radius)+1:t*length(radius), :) = [dr far err res_source_area_sort source_x source_y n_S_correct];
 end
 
 % print out the metric matrix with column names
 metric_all_frame = dataset({metric_all 'DR', 'FAR', 'ERR', 'Area', 'X',  'Y', 'NumOfPhotons'});
 
-save('main1_rep.mat', 'metric_all_frame', 'n_source', 'loc', 'radius', 'num_of_photon')
+save(['main2_rep_lambda_', num2str(lambda), '_num_', num2str(num_of_photon_one), '.mat'],...
+    'metric_all_frame', 'n_source', 'loc', 'radius', 'num_of_photon')
