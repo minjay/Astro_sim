@@ -1,15 +1,11 @@
 % numerical experiment 2
 % several round-shaped extended sources
 
-clear
-close all
-
 addpath(genpath('/home/minjay/G-SRG'))
 
 rng(1)
 T = 500;
 n_source = zeros(T, 1);
-lambda = 2000;
 loc = [];
 for i = 1:4
     for j = 1:4
@@ -17,7 +13,6 @@ for i = 1:4
     end
 end
 radius = 0.05*ones(1, 16);
-num_of_photon_one = 50;
 num_of_photon = num_of_photon_one*ones(1, 16);
 metric_all = cell(T, 1);
 
