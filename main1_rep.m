@@ -4,6 +4,8 @@
 clear
 close all
 
+addpath(genpath('/home/minjay/G-SRG'))
+
 rng(1)
 T = 500;
 n_source = zeros(T, 1);
