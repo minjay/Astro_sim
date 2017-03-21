@@ -19,9 +19,9 @@ end
 radius = 0.05*ones(1, 16);
 num_of_photon_one = 50;
 num_of_photon = num_of_photon_one*ones(1, 16);
-metric_all = zeros(T*length(radius), 7);
+metric_all = cell(T, 1);
 
-for t = 1:T
+parfor t = 1:T
     disp(['The ', num2str(t), '-th repetition'])
     % generate simulated data (inhomogeneous Poisson point process)
     X = sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, num_of_photon);
@@ -55,11 +55,8 @@ for t = 1:T
     
     [dr, far, err, res_source_area_sort, source_x, source_y, n_S_correct] =...
         perf_eval(length(radius), loc, radius, cx, cy, selected, cell_log_intensity, cell_area);
-    metric_all((t-1)*length(radius)+1:t*length(radius), :) = [dr far err res_source_area_sort source_x source_y n_S_correct];
+    metric_all{t} = [dr far err res_source_area_sort source_x source_y n_S_correct];
 end
-
-% print out the metric matrix with column names
-metric_all_frame = dataset({metric_all 'DR', 'FAR', 'ERR', 'Area', 'X',  'Y', 'NumOfPhotons'});
 
 save(['main2_rep_lambda_', num2str(lambda), '_num_', num2str(num_of_photon_one), '.mat'],...
     'metric_all_frame', 'n_source', 'loc', 'radius', 'num_of_photon')
