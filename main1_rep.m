@@ -13,7 +13,7 @@ lambda = 1000;
 loc = [0.5 0.5];
 radius = 0.25;
 num_of_photon = 200;
-metric_all = zeros(T, 7);
+metric_all = zeros(T*length(radius), 7);
 
 for t = 1:T
     disp(['The ', num2str(t), '-th repetition'])
@@ -49,7 +49,7 @@ for t = 1:T
     
     [dr, far, err, res_source_area_sort, source_x, source_y, n_S_correct] =...
         perf_eval(length(radius), loc, radius, num_of_photon, cx, cy, selected, cell_log_intensity, cell_area);
-    metric_all(t, :) = [dr far err res_source_area_sort source_x source_y n_S_correct];
+    metric_all((t-1)*length(radius)+1:t*length(radius), :) = [dr far err res_source_area_sort source_x source_y n_S_correct];
 end
 
 % print out the metric matrix with column names
