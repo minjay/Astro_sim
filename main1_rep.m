@@ -5,7 +5,7 @@ clear
 close all
 
 rng(1)
-T = 10;
+T = 500;
 n_source = zeros(T, 1);
 lambda = 1000;
 loc = [0.5 0.5];
