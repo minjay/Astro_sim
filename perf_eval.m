@@ -24,12 +24,16 @@ est_source_int = num_of_photon./(pi*radius.^2);
 % order of intensities
 loc_sort = loc(data_index_sort, :);
 radius_sort = radius(data_index_sort);
-num_of_photon_sort = num_of_photon(data_index_sort);
 % n1 records the number of successfully detected source photons for
 % each source
 % n2 records the number of false alarms for each source
 n1 = zeros(n_source, 1);
 n2 = zeros(n_source, 1);
+% n_S records the number of photons in S_i
+% n_Sc records the number of photons in S_i^c
+% also include photons from the background
+n_S = zeros(n_source, 1);
+n_Sc = zeros(n_source, 1); 
 % estimated source position
 source_x = zeros(n_source, 1);
 source_y = zeros(n_source, 1);
@@ -38,6 +42,9 @@ for i = 1:n_source
     dist_sq = (cx(res_source_sort{i})-loc_sort(i, 1)).^2+(cy(res_source_sort{i})-loc_sort(i, 2)).^2;
     n1(i) = length(find(dist_sq<=radius_sort(i)^2));
     n2(i) = length(find(dist_sq>radius_sort(i)^2));
+    dist_sq = (cx-loc_sort(i, 1)).^2+(cy-loc_sort(i, 2)).^2;
+    n_S(i) = length(find(dist_sq<=radius_sort(i)^2));
+    n_Sc(i) = length(find(dist_sq>radius_sort(i)^2));
     denom = sum(exp(cell_log_intensity(res_source_sort{i})));
     source_x(i) = sum(exp(cell_log_intensity(res_source_sort{i})).*cx(res_source_sort{i}))/denom;
     source_y(i) = sum(exp(cell_log_intensity(res_source_sort{i})).*cy(res_source_sort{i}))/denom;
@@ -46,10 +53,6 @@ for i = 1:n_source
     % background
     n_S_correct(i) = length(res_source_sort{i})-min(region_intensity)*res_source_area_sort(i);
 end
-% n_S records the number of photons in S_i
-% n_Sc records the number of photons in S_i^c
-n_S = num_of_photon_sort;
-n_Sc = length(cx)-n_S; 
 % detection rate
 dr = n1./n_S;
 % false alarm rate
