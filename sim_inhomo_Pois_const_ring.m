@@ -1,15 +1,15 @@
-function X = sim_inhomo_Pois_const_ring(range_x, range_y, lambda, loc, radius, num, seed, show_plot)
+function X = sim_inhomo_Pois_const_ring(range_x, range_y, lambda, loc, radius_out, radius_in, num, seed, show_plot)
 % simulate an inhomogeneous Poisson process with several homogeneous, 
-% round-shaped extended sources
+% ring-shaped extended sources
 % 
 % Input variables:
 %
-% shape: shape of sources
 % range_x: range of x
 % range_y: range of y
 % lambda: density of background
 % loc: location of sources
-% radius: radius of sources
+% radius_out: out radius of sources
+% radius_in: in radius of sources
 % num: number of points/photons in each source
 % seed: random seed
 % show_plot: whether show plot
@@ -34,16 +34,17 @@ end
 X = sim_homo_Pois(range_x, range_y, lambda);
 
 % number of sources
-n_s = length(radius);
+n_s = length(radius_out);
 
 max_iter = max(num)*10;
 for i = 1:n_s
     rand_num = rand(max_iter, 2);
     % generate random points within the square
-    rand_num(:, 1) = rand_num(:, 1)*radius(i)*2+loc(i, 1)-radius(i);
-    rand_num(:, 2) = rand_num(:, 2)*radius(i)*2+loc(i, 2)-radius(i);
-    % find the index of the points that are located in the circle
-    index = find(((rand_num(:, 1)-loc(i, 1)).^2+(rand_num(:, 2)-loc(i, 2)).^2)<=radius(i)^2);
+    rand_num(:, 1) = rand_num(:, 1)*radius_out(i)*2+loc(i, 1)-radius_out(i);
+    rand_num(:, 2) = rand_num(:, 2)*radius_out(i)*2+loc(i, 2)-radius_out(i);
+    % find the index of the points that are located in the ring
+    index = find(((rand_num(:, 1)-loc(i, 1)).^2+(rand_num(:, 2)-loc(i, 2)).^2)<=radius_out(i)^2 & ...
+        ((rand_num(:, 1)-loc(i, 1)).^2+(rand_num(:, 2)-loc(i, 2)).^2)>=radius_in(i)^2);
     index = index(1:num(i));
     rand_num = rand_num(index, :);
     % update X
