@@ -1,9 +1,10 @@
-function X = sim_inhomo_Pois_const_irreg(range_x, range_y, lambda, loc, radius, num, seed, show_plot)
+function X = sim_inhomo_Pois_const_ring(range_x, range_y, lambda, loc, radius, num, seed, show_plot)
 % simulate an inhomogeneous Poisson process with several homogeneous, 
 % round-shaped extended sources
 % 
 % Input variables:
 %
+% shape: shape of sources
 % range_x: range of x
 % range_y: range of y
 % lambda: density of background
@@ -21,12 +22,12 @@ function X = sim_inhomo_Pois_const_irreg(range_x, range_y, lambda, loc, radius, 
 %
 % X = sim_inhomo_Pois_const([0 1], [0 1], 100, [0.3 0.3; 0.7 0.7], [0.1 0.1], [100 100]);
 
-if nargin==6
-    show_plot = false;
-elseif nargin==7
-    rng(seed)
+if nargin==7
     show_plot = false;
 elseif nargin==8
+    rng(seed)
+    show_plot = false;
+elseif nargin==9
     rng(seed)
 end
 
@@ -35,7 +36,7 @@ X = sim_homo_Pois(range_x, range_y, lambda);
 % number of sources
 n_s = length(radius);
 
-max_iter = max(num)*2;
+max_iter = max(num)*10;
 for i = 1:n_s
     rand_num = rand(max_iter, 2);
     % generate random points within the square
