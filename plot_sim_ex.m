@@ -54,6 +54,7 @@ for i = 1:size(lambda_num, 1)
     subplot(3, 4, num_of_plot)
     X = sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, num_of_photon, 1);
     scatter(X(:, 1), X(:, 2), '.')
+    axis([0 1 0 1])
     axis square
 end
 
@@ -71,10 +72,11 @@ axis square
 for i = 1:size(lambda_num, 1)
     lambda = lambda_num(i, 1);
     num_of_photon_one = lambda_num(i, 2);
-    num_of_photon = num_of_photon_one*ones(1, 16);
+    num_of_photon = num_of_photon_one*ones(1, 3);
     num_of_plot = num_of_plot+1;
     subplot(3, 4, num_of_plot)
     X = sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, num_of_photon, 1);
     scatter(X(:, 1), X(:, 2), '.')
+    axis([0 1 0 1])
     axis square
 end
