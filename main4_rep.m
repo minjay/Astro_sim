@@ -1,20 +1,24 @@
-% numerical experiment 3
-% several round-shaped extended sources with different intensities
+% numerical experiment 4
+% several ring-shaped extended sources
 
 addpath(genpath('/home/minjay/G-SRG'))
+
+lambda = 2000;
+num_of_photon_one = 200;
 
 rng(1)
 T = 500;
 n_source = zeros(T, 1);
-loc = [0.3 0.3; 0.5 0.7; 0.7 0.3];
-radius = [0.15 0.1 0.05];
-num_of_photon = num_of_photon_one*ones(1, 3);
+loc = [0.3 0.3; 0.3 0.7; 0.7 0.3; 0.7 0.7];
+radius_out = 0.15*ones(1, 4);
+radius_in = 0.05*ones(1, 4);
+num_of_photon = num_of_photon_one*ones(1, 4);
 metric_all = cell(T, 1);
 
 parfor t = 1:T
     disp(['The ', num2str(t), '-th repetition'])
     % generate simulated data (inhomogeneous Poisson point process)
-    X = sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, num_of_photon);
+    X = sim_inhomo_Pois_const_ring([0 1], [0 1], lambda, loc, radius_out, radius_in, num_of_photon);
 
     % init comp
     [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1]);
@@ -39,14 +43,14 @@ parfor t = 1:T
     n_source(t) = num-index_BIC;
     
     % we assume that the number of sources is correct
-    selected = sets_all{num-length(radius)};
+    selected = sets_all{num-length(radius_out)};
     % remove empty cell array elements
     selected = selected(~cellfun(@isempty, selected));
     
     [dr, far, err, res_source_area_sort, source_x, source_y, n_S_correct] =...
-        perf_eval(length(radius), loc, radius, cx, cy, selected, cell_log_intensity, cell_area);
+        perf_eval_ring(length(radius_out), loc, radius_out, radius_in, cx, cy, selected, cell_log_intensity, cell_area);
     metric_all{t} = [dr far err res_source_area_sort source_x source_y n_S_correct];
 end
 
-save(['main3_rep_lambda_', num2str(lambda), '_num_', num2str(num_of_photon_one), '.mat'],...
-    'metric_all', 'n_source', 'loc', 'radius', 'num_of_photon')
+save(['main4_rep_lambda_', num2str(lambda), '_num_', num2str(num_of_photon_one), '.mat'],...
+    'metric_all', 'n_source', 'loc', 'radius_out', 'radius_in', 'num_of_photon')
