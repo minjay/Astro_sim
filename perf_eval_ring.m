@@ -1,5 +1,5 @@
 function [dr, far, err, region_area, source_x, source_y, n_S_correct] =...
-    perf_eval_ring(n_source, loc, radius, cx, cy, selected, cell_log_intensity, cell_area)
+    perf_eval_ring(n_source, loc, radius_out, radius_in, cx, cy, selected, cell_log_intensity, cell_area)
 % performance evaluation
 
 % compute/estimate the intensity of the fitted regions
@@ -30,8 +30,8 @@ n_S_correct = zeros(n_source, 1);
 % note that there might be a mismatch between estimated and true sources
 for i = 1:n_source 
     dist_sq = (cx-loc(i, 1)).^2+(cy-loc(i, 2)).^2;
-    n_S(i) = length(find(dist_sq<=radius(i)^2));
-    n_Sc(i) = length(find(dist_sq>radius(i)^2));
+    n_S(i) = length(find(dist_sq<=radius_out(i)^2 & dist_sq>=radius_in(i)^2));
+    n_Sc(i) = length(find(dist_sq>radius_out(i)^2 | dist_sq<radius_in(i)^2));
     denom = sum(exp(cell_log_intensity(selected{i})));
     source_x(i) = sum(exp(cell_log_intensity(selected{i})).*cx(selected{i}))/denom;
     source_y(i) = sum(exp(cell_log_intensity(selected{i})).*cy(selected{i}))/denom;
@@ -58,8 +58,8 @@ end
 % compute n1 and n2 after matching
 for i = 1:n_source
     dist_sq = (cx(selected{i})-loc(match(i), 1)).^2+(cy(selected{i})-loc(match(i), 2)).^2;
-    n1(i) = length(find(dist_sq<=radius(match(i))^2));
-    n2(i) = length(find(dist_sq>radius(match(i))^2));
+    n1(i) = length(find(dist_sq<=radius_out(match(i))^2 & dist_sq>=radius_in(match(i))^2));
+    n2(i) = length(find(dist_sq>radius_out(match(i))^2 | dist_sq<radius_in(match(i))^2));
 end
   
 % detection rate
