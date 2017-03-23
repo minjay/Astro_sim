@@ -3,9 +3,6 @@
 
 addpath(genpath('/home/minjay/G-SRG'))
 
-lambda = 2000;
-num_of_photon_one = 200;
-
 rng(1)
 T = 500;
 n_source = zeros(T, 1);
