@@ -1,11 +1,14 @@
-% numerical experiment 1
-% one round-shaped extended source
+% numerical experiment 4
+% several point sources on an extended source
 
 clear
 close all
 
+loc = [0.5 0.5; 0.4 0.4; 0.4 0.6; 0.5 0.5; 0.6 0.4; 0.6 0.6];
+radius = [0.25 0.025*ones(1, 5)];
+num = [500 50*ones(1, 5)];
 % generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_const([0 1], [0 1], 1000, [0.5 0.5], 0.25, 200);
+X = sim_inhomo_Pois_const([0 1], [0 1], 1000, loc, radius, num, 0, true);
 
 % init comp
 [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1]);
@@ -21,7 +24,7 @@ axis image
 
 % get seeds
 [seeds, num, invalid] = get_seeds_sim(0.1, 0.9, 0.1, 0.9,...
-    0.2, 0.2, 5, cell_log_intensity, cell_area, cx, cy, 2);
+    0.1, 0.1, 5, cell_log_intensity, cell_area, cx, cy, 2);
 disp(['Number of regions is ', num2str(num)])
 
 % plot the seeds
