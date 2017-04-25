@@ -1,11 +1,23 @@
-% numerical experiment 1
-% one round-shaped extended source
+% numerical experiment 5
+% several point sources on an extended source
+% the shape of the extended source is irregular
 
 clear
 close all
 
+range_x = [0.1 0.4; 0.4 0.6; 0.6 0.9];
+range_y = [0.2 0.4; 0.2 0.8; 0.6 0.8];
+num = [150 300 150];
 % generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_const([0 1], [0 1], 1000, [0.5 0.5], 0.25, 200);
+X = sim_inhomo_Pois_const_L_shape(range_x, range_y, num);
+
+loc = [0.3 0.3; 0.5 0.5; 0.7 0.7];
+radius = [0.025 0.025 0.025];
+num = [50 50 50];
+X = [X; sim_inhomo_Pois_const([0 1], [0 1], 1000, loc, radius, num)];
+
+scatter(X(:, 1), X(:, 2), '.')
+axis square
 
 % init comp
 [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1]);
@@ -21,7 +33,7 @@ axis image
 
 % get seeds
 [seeds, num, invalid] = get_seeds_sim(0.1, 0.9, 0.1, 0.9,...
-    0.2, 0.2, 5, cell_log_intensity, cell_area, cx, cy, 2);
+    0.1, 0.1, 5, cell_log_intensity, cell_area, cx, cy, 2);
 disp(['Number of regions is ', num2str(num)])
 
 % plot the seeds
@@ -49,7 +61,6 @@ hold on
 for i = 1:num
     scatter(cx(region_sets{i}), cy(region_sets{i}), [],  colors(i, :), 'filled')
 end
-viscircles([0.5 0.5], 0.25, 'EdgeColor', 'r', 'LineWidth', 1.5);
 axis image
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,5 +91,4 @@ for i = 1:num
         scatter(cx(selected{i}), cy(selected{i}), [],  colors(index, :), 'filled')
     end
 end
-viscircles([0.5 0.5], 0.25, 'EdgeColor', 'r', 'LineWidth', 1.5);
 axis image
