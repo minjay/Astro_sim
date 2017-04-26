@@ -1,20 +1,17 @@
-% numerical experiment 5
+% numerical experiment 6
 % several point sources on an extended source
-% the shape of the extended source is irregular
+% the shape of the extended source is irregular (ring-shaped)
 
 clear
 close all
 
-range_x = [0.1 0.4; 0.4 0.6; 0.6 0.9];
-range_y = [0.2 0.4; 0.2 0.8; 0.6 0.8];
-num = [150 300 150];
 % generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_const_L_shape(range_x, range_y, num);
+X = sim_inhomo_Pois_const_ring([0 1], [0 1], 500, [0.3 0.5], 0.4, 0.2, 500);
 
-loc = [0.3 0.3; 0.5 0.5; 0.7 0.7];
-radius = [0.025 0.025 0.025];
-num = [50 50 50];
-X = [X; sim_inhomo_Pois_const([0 1], [0 1], 1000, loc, radius, num)];
+loc = [0.5 0.7; 0.6 0.5; 0.5 0.3];
+radius = 0.025*ones(1, 3);
+num = 50*ones(1, 3);
+X = [X; sim_inhomo_Pois_const([0 1], [0 1], 500, loc, radius, num)];
 
 scatter(X(:, 1), X(:, 2), '.')
 axis square
