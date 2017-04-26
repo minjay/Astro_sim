@@ -44,7 +44,8 @@ for i = 1:n_s
     rand_num(:, 2) = rand_num(:, 2)*radius_out(i)*2+loc(i, 2)-radius_out(i);
     % find the index of the points that are located in the ring
     index = find(((rand_num(:, 1)-loc(i, 1)).^2+(rand_num(:, 2)-loc(i, 2)).^2)<=radius_out(i)^2 & ...
-        ((rand_num(:, 1)-loc(i, 1)).^2+(rand_num(:, 2)-loc(i, 2)).^2)>=radius_in(i)^2);
+        ((rand_num(:, 1)-loc(i, 1)).^2+(rand_num(:, 2)-loc(i, 2)).^2)>=radius_in(i)^2 & ...
+        rand_num(:, 1)>=loc(i, 1));
     index = index(1:num(i));
     rand_num = rand_num(index, :);
     % update X
