@@ -5,6 +5,8 @@
 clear
 close all
 
+rng(0)
+
 % generate simulated data (inhomogeneous Poisson point process)
 X = sim_inhomo_Pois_const_ring([0 1], [0 1], 500, [0.3 0.5], 0.4, 0.2, 500);
 
@@ -13,6 +15,10 @@ radius = 0.025*ones(1, 3);
 num = 50*ones(1, 3);
 X = [X; sim_inhomo_Pois_const([0 1], [0 1], 500, loc, radius, num)];
 
+h = figure;
+
+subplot = @(m,n,p) subtightplot (m, n, p, [0.05 0.075], [0.075 0.05], [0.05 0.02]);
+subplot(2, 3, 1)
 scatter(X(:, 1), X(:, 2), '.')
 axis square
 
@@ -20,21 +26,21 @@ axis square
 [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1]);
 
 % plot log intensity
-figure
+subplot(2, 3, 2)
 triplot(DT)
 hold on
 scatter(cx, cy, [], cell_log_intensity, 'o', 'filled')
-colorbar
+%colorbar
 colormap(jet)
 axis image
 
 % get seeds
 [seeds, num, invalid] = get_seeds_sim(0.1, 0.9, 0.1, 0.9,...
-    0.1, 0.1, 5, cell_log_intensity, cell_area, cx, cy, 2);
+    0.1, 0.1, 3, cell_log_intensity, cell_area, cx, cy, 2);
 disp(['Number of regions is ', num2str(num)])
 
 % plot the seeds
-figure
+subplot(2, 3, 3)
 triplot(DT)
 hold on
 % specify the colormap
@@ -52,7 +58,7 @@ adj_mat = get_adj_mat( E, n );
 [region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid');
 
 % plot the over-segmented image
-figure
+subplot(2, 3, 4)
 triplot(DT)
 hold on
 for i = 1:num
@@ -65,18 +71,19 @@ axis image
 [sets_all, log_like_all] = merge_region(num, cell_area, ...
     cell_log_intensity, region_sets, adj_mat, n);
 
-figure
-plot(log_like_all, '-o')
+%figure
+%plot(log_like_all, '-o')
 
 BIC_all = -2*log_like_all+6*(num-1:-1:0)'*log(n);
-figure
-plot(num-1:-1:0, BIC_all, '-o')
+subplot(2, 3, 5)
+plot(num-1:-1:0, BIC_all, '-o', 'MarkerSize', 3)
 xlabel('Number of clusters/sources')
 ylabel('BIC')
+[min_BIC, index_BIC] = min(BIC_all);
+text(num-index_BIC-1, min_BIC-150, num2str(num-index_BIC), 'FontSize', 12)
+axis square
 
-[~, index_BIC] = min(BIC_all);
-
-figure
+subplot(2, 3, 6)
 triplot(DT)
 hold on
 % the final result
@@ -89,3 +96,5 @@ for i = 1:num
     end
 end
 axis image
+
+set(h, 'Position', [0, 0, 800, 500]);
