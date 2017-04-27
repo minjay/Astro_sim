@@ -31,7 +31,7 @@ axis image
 
 % get seeds
 [seeds, num, invalid] = get_seeds_sim(0.1, 0.9, 0.1, 0.9,...
-    0.1, 0.1, 5, cell_log_intensity, cell_area, cx, cy, 2);
+    0.1, 0.1, 3, cell_log_intensity, cell_area, cx, cy, 2);
 disp(['Number of regions is ', num2str(num)])
 
 % plot the seeds
