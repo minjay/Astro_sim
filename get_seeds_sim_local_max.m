@@ -1,5 +1,5 @@
-function [seeds, num_s, invalid] = get_seeds_sim(st_x, en_x, st_y, en_y,...
-    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor)
+function [seeds, num_s, invalid] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
+    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k)
 % get initial seeds, which are uniformly spreaded in the region
 %
 % Input variables:
@@ -73,5 +73,23 @@ end
 % remove
 seeds(index) = [];
 num_s = num_s-length(index);
+
+% add seeds for point sources
+valid = setdiff(1:n, invalid);
+% k
+% number of nearest neighbors
+% find local maximum
+for i = unselected_points
+    x = cx(i);
+    y = cy(i);
+    dist = (cx(valid)-x).^2+(cy(valid)-y).^2;
+    % sort them ascendingly
+    [~, index] = sort(dist);
+    if cell_log_intensity(i)>=max(cell_log_intensity(valid(index(1:k))))
+        num_s = num_s+1;
+        % size of seed set=1
+        seeds{num_s} = i;
+    end
+end
 
 end
