@@ -1,5 +1,5 @@
-function [seeds, num_s, invalid] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
-    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k)
+function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
+    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2)
 % get initial seeds, which are uniformly spreaded in the region
 %
 % Input variables:
@@ -71,9 +71,12 @@ for i = 1:num_s
     end
 end
 % remove
+seeds_rej = seeds(index);
 seeds(index) = [];
 num_s = num_s-length(index);
 
+seeds_pt = {};
+num_s_pt = 0;
 % add seeds for point sources
 valid = setdiff(1:n, invalid);
 % k
@@ -85,10 +88,10 @@ for i = unselected_points
     dist = (cx(valid)-x).^2+(cy(valid)-y).^2;
     % sort them ascendingly
     [~, index] = sort(dist);
-    if cell_log_intensity(i)>=max(cell_log_intensity(valid(index(1:k))))
-        num_s = num_s+1;
-        % size of seed set=1
-        seeds{num_s} = i;
+    if cell_log_intensity(i)>=max(cell_log_intensity(valid(index(1:k)))) && ...
+            isempty(intersect(valid(index(1:set_size2)), setdiff(1:n, unselected_points)))
+        num_s_pt = num_s_pt+1;
+        seeds_pt{num_s_pt} = valid(index(1:set_size2));
     end
 end
 
