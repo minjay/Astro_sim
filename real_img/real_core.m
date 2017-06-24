@@ -88,6 +88,6 @@ for i = 1:num
         scatter(cx(selected{i}), cy(selected{i}), 12, log_int*ones(length(selected{i}), 1), 'filled')
     end
 end
-colorbar
+colorbar('SouthOutside')
 colormap(hsv)
 axis image
