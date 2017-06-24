@@ -1,10 +1,13 @@
-function [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, bound_x, bound_y)
+function [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, bound_x, bound_y, count)
 % conduct some initial computations
 % Input variables:
 % 
 % X: an n-by-2 matrix
 % bound_x: the boundary of x-axis
 % bound_y: the boundary of y-axis
+% count: the count of photons at each location
+%        for simulated data, it is one
+%        for real data, it can be larger than one
 %
 % Output variables:
 %
@@ -40,7 +43,7 @@ for i = 1:n
         intensity(i) = NaN;
     else
         cell_area(i) = polyarea(V(R{i}, 1), V(R{i}, 2));
-        intensity(i) = 1/cell_area(i);
+        intensity(i) = count(i)/cell_area(i);
     end
 end
 
