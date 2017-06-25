@@ -32,7 +32,7 @@ box on
 title('(b) Simulated Data')
 
 % init comp
-[cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1]);
+[cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1], ones(size(X, 1), 1));
 
 % plot log intensity
 subplot(2, 3, 3)
