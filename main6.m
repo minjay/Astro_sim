@@ -11,11 +11,11 @@ loc_ring = [0.3 0.5];
 radius_out = 0.4;
 radius_in = 0.2;
 % generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_const_ring([0 1], [0 1], 500, loc_ring, radius_out, radius_in, 300, 0);
+X = sim_inhomo_Pois_const_ring([0 1], [0 1], 500, loc_ring, radius_out, radius_in, 250, 0);
 
 loc = [0.5 0.7; 0.6 0.5; 0.5 0.3];
 radius = 0.025*ones(1, 3);
-num = 30*ones(1, 3);
+num = 25*ones(1, 3);
 X = [X; sim_inhomo_Pois_const([0 1], [0 1], 500, loc, radius, num)];
 
 h = figure;
