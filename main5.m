@@ -9,7 +9,7 @@ GRAY = [0.6 0.6 0.6];
 
 range_x = [0.2 0.4; 0.4 0.6; 0.6 0.8];
 range_y = [0.2 0.4; 0.2 0.8; 0.6 0.8];
-num = [60 180 60];
+num = [50 150 50];
 % generate simulated data (inhomogeneous Poisson point process)
 X = sim_inhomo_Pois_const_L_shape(range_x, range_y, num, 0);
 
