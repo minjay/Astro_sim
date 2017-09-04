@@ -1,6 +1,7 @@
 function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
     step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2)
-% get initial seeds, which are uniformly spreaded in the region
+% get initial seeds, which are either uniformly spreaded in the region or
+% found by local maxima
 %
 % Input variables:
 %
@@ -10,12 +11,14 @@ function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_
 % en_y: the end value of y
 % step_x: the step size of x
 % step_y: the step size of y
-% set_size: the size of each seed set
+% set_size: the size of each seed set, which is uniformly spreaded in the region
 % cell_log_intensity: the log intensity of voronoi cells
 % cell_area: the area of voronoi cells
 % cx: the x coordinate of points
 % cy: the y coordinate of points
 % factor: the factor alpha that determines the width of the interval
+% k: number of nearest neighbors to determine local maxima
+% set_size2: the size of each seed set found by local maxima
 %
 % Output variables:
 %
