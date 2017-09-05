@@ -1,3 +1,6 @@
+addpath(genpath('/home/minjay/G-SRG'))
+addpath(genpath('/home/minjay/Astro_sim'))
+
 GRAY = [0.6 0.6 0.6];
 
 % read data
