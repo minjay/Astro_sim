@@ -12,23 +12,24 @@ A = importdata(filename,delimiterIn,headerlinesIn);
 X = A.data;
 clear A
 
-% normalize locations to [0, 1] x [0, 1]
+% normalize locations
 min_x = min(X(:, 1));
 max_x = max(X(:, 1));
 min_y = min(X(:, 2));
 max_y = max(X(:, 2));
+% the denominators have to be the same; otherwise, the area is distorted
 X(:, 1) = (X(:, 1) - min_x) ./ (max_x - min_x);
-X(:, 2) = (X(:, 2) - min_y) ./ (max_y - min_y);
+X(:, 2) = (X(:, 2) - min_y) ./ (max_x - min_x);
 
 fig = figure;
 scatter(X(:, 1), X(:, 2), '.')
 axis image
-saveas(fig, 'data', 'epsc')
+saveas(fig, 'data', 'png')
 
 disp('Conducting some initial computations...')
 % init comp
 bound_x = [0 1];
-bound_y = [0 1];
+bound_y = [0 max(X(:, 2))];
 n = size(X, 1);
 count = ones(n, 1);
 [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, bound_x, bound_y, count);
@@ -42,12 +43,12 @@ scatter(cx(valid), cy(valid), 12, cell_log_intensity(valid), 'filled')
 colorbar
 colormap(jet)
 axis image
-saveas(fig, 'log_intensity', 'epsc')
+saveas(fig, 'log_intensity', 'png')
 
 disp('Getting initial seeds...')
 % get seeds
-[seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_local_max(0.1, 0.9, 0.1, 0.9,...
-    0.1, 0.1, 10, cell_log_intensity, cell_area, cx, cy, 2, 100, 10);
+[seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_local_max(0.1, 0.9, 0.1*bound_y(2), 0.9*bound_y(2),...
+    0.1, 0.1*bound_y(2), 20, cell_log_intensity, cell_area, cx, cy, 2, 100, 20);
 num = num_s+num_s_pt;
 disp(['Number of regions is ', num2str(num)])
 
@@ -67,7 +68,7 @@ for i = 1:length(seeds_rej)
     scatter(cx(seeds_rej{i}), cy(seeds_rej{i}), 12, 'k', '^', 'filled')
 end
 axis image
-saveas(fig, 'seeds', 'epsc')
+saveas(fig, 'seeds', 'png')
 
 seeds_all = [seeds seeds_pt];
 
@@ -77,7 +78,7 @@ region_sets = seeds_all;
 disp('Seeded region growing...')
 % graph-based SRG
 adj_mat = get_adj_mat( E, n );
-[region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid');
+[region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid', true, 1000);
 
 % plot the over-segmented image
 fig = figure;
@@ -90,7 +91,7 @@ for i = 1:num_s_pt
     scatter(cx(region_sets{i+num_s}), cy(region_sets{i+num_s}), 12, 'r', 'filled')
 end
 axis image
-saveas(fig, 'over_seg', 'epsc')
+saveas(fig, 'over_seg', 'png')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -106,7 +107,7 @@ BIC_all = -2*log_like_all+6*(num-1:-1:0)'*log(n);
 
 fig = figure;
 plot(num-1:-1:0, BIC_all, '-o', 'MarkerSize', 3)
-saveas(fig, 'BIC', 'epsc')
+saveas(fig, 'BIC', 'png')
 
 fig = figure;
 triplot(DT, 'Color', GRAY)
@@ -122,4 +123,4 @@ end
 colorbar('SouthOutside')
 colormap(hsv)
 axis image
-saveas(fig, 'over_seg', 'epsc')
+saveas(fig, 'final_seg', 'png')
