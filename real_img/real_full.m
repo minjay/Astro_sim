@@ -3,6 +3,9 @@ addpath(genpath('/home/minjay/Astro_sim'))
 
 GRAY = [0.6 0.6 0.6];
 
+% set global random seed
+rng(0)
+
 % read data
 filename='photon_loc.txt';
 delimiterIn = ' ';
@@ -47,8 +50,18 @@ saveas(fig, 'log_intensity', 'png')
 
 disp('Getting initial seeds...')
 % get seeds
-[seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_local_max(0.1, 0.9, 0.1*bound_y(2), 0.9*bound_y(2),...
-    0.1, 0.1*bound_y(2), 20, cell_log_intensity, cell_area, cx, cy, 2, 100, 20);
+st_x = 0.1;
+en_x = 0.9;
+st_y = 0.1*bound_y(2);
+en_y = 0.9*bound_y(2);
+step_x = 0.1;
+step_y = 0.1*bound_y(2);
+set_size = 20;
+factor = 2;
+k = 100;
+set_size2 = 20;
+[seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
+    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2);
 num = num_s+num_s_pt;
 disp(['Number of regions is ', num2str(num)])
 
@@ -124,3 +137,13 @@ colorbar('SouthOutside')
 colormap(hsv)
 axis image
 saveas(fig, 'final_seg', 'png')
+
+% save all variables (exclude figure handle)
+clear fig
+filename = 'real_full_result';
+current_datetime = clock;
+for i = current_datetime
+    filename = [filename, '_', num2str(fix(i))];
+end
+filename = [filename, '.mat'];
+save(filename)
