@@ -1,3 +1,4 @@
+tic
 addpath(genpath('/home/minjay/G-SRG'))
 addpath(genpath('/home/minjay/Astro_sim'))
 
@@ -137,6 +138,9 @@ colorbar('SouthOutside')
 colormap(hsv)
 axis image
 saveas(fig, 'final_seg', 'png')
+
+elapsed_time = toc;
+disp(['Elapsed time is ', num2str(elapsed_time), ' seconds.'])
 
 % save all variables (exclude figure handle)
 clear fig
