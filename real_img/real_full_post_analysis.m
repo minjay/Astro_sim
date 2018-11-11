@@ -147,8 +147,36 @@ for i = 1:num_nonempty
         scatter(cx(selected_nonempty{i}), cy(selected_nonempty{i}), 12, log_int_all(i)*ones(length(selected_nonempty{i}), 1), 'filled')
     end
 end
-colorbar('SouthOutside')
+colorbar('EastOutside')
 colormap(hsv)
 axis image
 min_white_margin(gca);
 saveas(fig, 'point_sources', 'png')
+
+fig = figure;
+plot(num-1:-1:0, BIC_all, '-o', 'MarkerSize', 3)
+y_range = get(gca, 'ylim');
+hold on
+plot([num-index_BIC num-index_BIC],y_range, 'LineWidth', 1.5)
+axis tight
+position = get(gcf, 'Position');
+% shrink width and height
+set(gcf, 'Position', [position(1), position(2), position(3)/1.5, position(4)/1.5])
+min_white_margin(gca);
+
+fig = figure;
+triplot(DT, 'Color', GRAY)
+hold on
+% the final result
+selected = sets_all{index_BIC};
+for i = 1:num
+    if ~isempty(selected{i})
+        log_int = log(sum(exp(cell_log_intensity(selected{i})).*cell_area(selected{i}))/sum(cell_area(selected{i})));
+        scatter(cx(selected{i}), cy(selected{i}), 12, log_int*ones(length(selected{i}), 1), 'filled')
+    end
+end
+colorbar('EastOutside')
+colormap(hsv)
+axis image
+min_white_margin(gca);
+saveas(fig, 'segment_result_points', 'png')
