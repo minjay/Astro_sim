@@ -28,6 +28,7 @@ X(:, 2) = (X(:, 2) - min_y) ./ (max_x - min_x);
 fig = figure;
 scatter(X(:, 1), X(:, 2), '.')
 axis image
+min_white_margin(gca);
 saveas(fig, 'data', 'png')
 
 disp('Conducting some initial computations...')
@@ -47,6 +48,7 @@ scatter(cx(valid), cy(valid), 12, cell_log_intensity(valid), 'filled')
 colorbar
 colormap(jet)
 axis image
+min_white_margin(gca);
 saveas(fig, 'log_intensity', 'png')
 
 disp('Getting initial seeds...')
