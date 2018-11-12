@@ -155,6 +155,8 @@ saveas(fig, 'point_sources', 'png')
 
 fig = figure;
 plot(num-1:-1:0, BIC_all, '-o', 'MarkerSize', 3)
+xlabel('Number of sources K (excluding the background)')
+ylabel('BIC')
 y_range = get(gca, 'ylim');
 hold on
 plot([num-index_BIC num-index_BIC],y_range, 'LineWidth', 1.5)
