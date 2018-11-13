@@ -25,13 +25,15 @@ disp('Conducting some initial computations...')
 % init comp
 bound_x = [0 1];
 bound_y = [0 max(X(:, 2))];
-n = size(X, 1);
 % jitter X
 X_jitter = X + randn(size(X)) * 0.01;
 X_jitter(:, 1) = max(X_jitter(:, 1), 0);
 X_jitter(:, 1) = min(X_jitter(:, 1), 1);
 X_jitter(:, 2) = max(X_jitter(:, 2), 0);
 X_jitter(:, 2) = min(X_jitter(:, 2), max(X(:, 2)));
+% drop duplicate rows
+X_jitter = unique(X_jitter, 'rows');
+n = size(X_jitter, 1);
 count = ones(n, 1);
 [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X_jitter, bound_x, bound_y, count);
 
