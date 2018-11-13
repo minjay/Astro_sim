@@ -1,11 +1,7 @@
-tic
-addpath(genpath('/home/minjay/G-SRG'))
-addpath(genpath('/home/minjay/Astro_sim'))
+function [] = real_full_jitter(seed)
 
+rng(seed)
 GRAY = [0.6 0.6 0.6];
-
-% set global random seed
-rng(0)
 
 % read data
 filename='photon_loc.txt';
@@ -141,15 +137,9 @@ colormap(hsv)
 axis image
 saveas(fig, 'final_seg', 'png')
 
-elapsed_time = toc;
-disp(['Elapsed time is ', num2str(elapsed_time), ' seconds.'])
-
 % save all variables (exclude figure handle)
 clear fig
-filename = 'real_full_result';
-current_datetime = clock;
-for i = current_datetime
-    filename = [filename, '_', num2str(fix(i))];
-end
-filename = [filename, '.mat'];
+filename = ['real_full_result_', num2str(seed), '.mat'];
 save(filename)
+
+end
