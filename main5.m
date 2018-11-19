@@ -136,6 +136,16 @@ hold on
 for i = 1:length(radius)
     viscircles(loc(i, :), radius(i), 'EdgeColor', 'k', 'LineWidth', 0.75, 'EnhanceVisibility', false);
 end
+% horizontal lines
+for i = 1:3
+    plot(range_x(i, :), [range_y(i, 1) range_y(i, 1)], 'k', 'LineWidth', 1)
+    plot(range_x(i, :), [range_y(i, 2) range_y(i, 2)], 'k', 'LineWidth', 1)
+end
+% vertical lines
+plot([range_x(1, 1) range_x(1, 1)], range_y(1, :), 'k', 'LineWidth', 1)
+plot([range_x(3, 2) range_x(3, 2)], range_y(3, :), 'k', 'LineWidth', 1)
+plot([range_x(1, 2) range_x(1, 2)], [range_y(1, 2) range_y(3, 2)], 'k', 'LineWidth', 1)
+plot([range_x(2, 2) range_x(2, 2)], [range_y(1, 1) range_y(3, 1)], 'k', 'LineWidth', 1)
 title('(f) Segmentation after Region Merging')
 
 set(h, 'Position', [0, 0, 875, 500]);

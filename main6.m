@@ -130,6 +130,10 @@ hold on
 for i = 1:length(radius)
     viscircles(loc(i, :), radius(i), 'EdgeColor', 'k', 'LineWidth', 0.75, 'EnhanceVisibility', false);
 end
+ang(loc_ring, radius_out, [-pi/2 pi/2], 'k', 1);
+ang(loc_ring, radius_in, [-pi/2 pi/2], 'k', 1);
+plot([loc_ring(1) loc_ring(1)], [loc_ring(2)-radius_out loc_ring(2)-radius_in], 'k', 'LineWidth', 1)
+plot([loc_ring(1) loc_ring(1)], [loc_ring(2)+radius_in loc_ring(2)+radius_out], 'k', 'LineWidth', 1)
 title('(f) Segmentation after Region Merging')
 
 set(h, 'Position', [0, 0, 875, 500]);
