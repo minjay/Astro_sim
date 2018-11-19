@@ -19,6 +19,11 @@ function [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, bound_
 % cell_log_intensity: the log intensity of voronoi cells
 % cell_area: the area of voronoi cells
 
+if nargin == 3
+    n = size(X, 1);
+    count = ones(n, 1);
+end
+
 cx = X(:, 1);
 cy = X(:, 2);
 DT = delaunayTriangulation(cx, cy);
