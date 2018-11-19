@@ -1,36 +1,33 @@
 function [] = real_full_jitter(seed)
+load('real_full_result_2018_11_1_23_4_37.mat')
+
+% drop empty entries in the cell array
+num = length(selected);
+
+area_all = [];
+log_int_all = [];
+selected_nonempty = {};
+index = 0;
+for i = 1:num
+    if ~isempty(selected{i})
+        index = index+1;
+        selected_nonempty{index} = selected{i};
+        area = sum(cell_area(selected{i}));
+        area_all = [area_all, area];
+        log_int = log(sum(exp(cell_log_intensity(selected{i})).*cell_area(selected{i}))/area);
+        log_int_all = [log_int_all, log_int];
+    end
+end
+
+num_nonempty = length(selected_nonempty);
 
 rng(seed)
 GRAY = [0.6 0.6 0.6];
 
-% read data
-filename='photon_loc.txt';
-delimiterIn = ' ';
-headerlinesIn = 1;
-A = importdata(filename,delimiterIn,headerlinesIn);
-
-X = A.data;
-clear A
-
-% normalize locations
-min_x = min(X(:, 1));
-max_x = max(X(:, 1));
-min_y = min(X(:, 2));
-max_y = max(X(:, 2));
-% the denominators have to be the same; otherwise, the area is distorted
-X(:, 1) = (X(:, 1) - min_x) ./ (max_x - min_x);
-X(:, 2) = (X(:, 2) - min_y) ./ (max_x - min_x);
-
-disp('Conducting some initial computations...')
-% init comp
-bound_x = [0 1];
-bound_y = [0 max(X(:, 2))];
 % jitter X
-X_jitter = X + randn(size(X)) * 0.01;
-X_jitter(:, 1) = max(X_jitter(:, 1), 0);
-X_jitter(:, 1) = min(X_jitter(:, 1), 1);
-X_jitter(:, 2) = max(X_jitter(:, 2), 0);
-X_jitter(:, 2) = min(X_jitter(:, 2), max(X(:, 2)));
+[sx_all, sy_all, ~] = get_bootstrap_samples(cx, cy,...
+    DT, num_nonempty, selected_nonempty, log_int_all);
+X_jitter = [sx_all', sy_all'];
 % drop duplicate rows
 X_jitter = unique(X_jitter, 'rows');
 n = size(X_jitter, 1);
