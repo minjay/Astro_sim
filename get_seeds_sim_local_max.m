@@ -1,5 +1,5 @@
-function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
-    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2)
+function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
+    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2, invalid)
 % get initial seeds, which are either uniformly spreaded in the region or
 % found by local maxima
 %
@@ -19,12 +19,12 @@ function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_
 % factor: the factor alpha that determines the width of the interval
 % k: number of nearest neighbors to determine local maxima
 % set_size2: the size of each seed set found by local maxima
+% invalid: the set of points that are invalid
 %
 % Output variables:
 %
 % seeds: seed sets
 % num_s: the number of seed sets
-% invalid: the set of points that are on the boundary
 
 n = length(cx);
 
@@ -35,8 +35,6 @@ seeds = {};
 
 % set of points that have not been selected
 unselected_points = 1:n;
-% set of points that are on the boundary
-invalid = find(isnan(cell_log_intensity));
 unselected_points = setdiff(unselected_points, invalid);
 
 % place seeds uniformly

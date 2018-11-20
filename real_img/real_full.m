@@ -63,8 +63,8 @@ set_size = 20;
 factor = 2;
 k = 100;
 set_size2 = 20;
-[seeds, seeds_rej, seeds_pt, num_s, num_s_pt, invalid] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
-    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2);
+[seeds, seeds_rej, seeds_pt, num_s, num_s_pt] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
+    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2, invalid);
 num = num_s+num_s_pt;
 disp(['Number of regions is ', num2str(num)])
 
