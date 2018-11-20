@@ -38,12 +38,12 @@ bound_y = [0 max(X(:, 2))];
 n = size(X, 1);
 count = ones(n, 1);
 [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, bound_x, bound_y, count);
+adj_mat = get_adj_mat( E, n );
 
 fig = figure;
 triplot(DT, 'Color', GRAY)
 hold on
-invalid = find(isnan(cell_log_intensity));
-valid = setdiff(1:n, invalid);
+[invalid, valid] = get_invalid_cells(cell_log_intensity, adj_mat, n);
 scatter(cx(valid), cy(valid), 12, cell_log_intensity(valid), 'filled')
 colorbar
 colormap(jet)
@@ -93,7 +93,6 @@ region_sets = seeds_all;
 
 disp('Seeded region growing...')
 % graph-based SRG
-adj_mat = get_adj_mat( E, n );
 [region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid', true, 1000);
 
 % plot the over-segmented image
