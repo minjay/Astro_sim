@@ -7,6 +7,8 @@ valid = setdiff(1:n, invalid)';
 
 adj_mat_valid = adj_mat(valid, valid);
 num_nbrs = sum(adj_mat_valid, 2);
+% TODO: This solution is approximate. I need to find all isolated
+% components.
 isolated_cells = valid(num_nbrs == 0);
 
 invalid = [invalid; isolated_cells];
