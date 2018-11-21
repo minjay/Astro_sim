@@ -37,7 +37,7 @@ count = ones(n, 1);
 [cx, cy, n, ~, E, cell_log_intensity, cell_area] = init_comp(X_jitter, bound_x, bound_y, count);
 adj_mat = get_adj_mat( E, n );
 
-[invalid, valid] = get_invalid_cells(cell_log_intensity, adj_mat, n);
+[invalid, ~] = get_invalid_cells(cell_log_intensity, adj_mat, n);
 
 disp('Getting initial seeds...')
 % get seeds
@@ -63,7 +63,7 @@ region_sets = seeds_all;
 
 disp('Seeded region growing...')
 % graph-based SRG
-[region_sets, ~] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid', true, 1000);
+[region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid', true, 1000);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -74,8 +74,8 @@ disp('Region merging...')
 BIC_all = -2*log_like_all+6*(num-1:-1:0)'*log(n);
 [~, index_BIC] = min(BIC_all);
 
-cx_valid = cx(valid);
-cy_valid = cy(valid);
+cx_labeled = cx(labeled_cells);
+cy_labeled = cy(labeled_cells);
 
 selected = sets_all{index_BIC};
 num = length(selected);
@@ -94,9 +94,9 @@ impute_log_int = zeros(length(cx_origin), 1);
 for i = 1:length(cx_origin)
     % Find the nearest (in terms of Euclidean distance) valid resampled
     % Voronoi cell to impute each original Voronoi cell.
-    dist_vec = pdist2([cx_origin(i), cy_origin(i)], [cx_valid, cy_valid]);
+    dist_vec = pdist2([cx_origin(i), cy_origin(i)], [cx_labeled, cy_labeled]);
     [~, index] = min(dist_vec);
-    impute_log_int(i) = log_int_all(valid(index));
+    impute_log_int(i) = log_int_all(labeled_cells(index));
 end
 
 end
