@@ -154,12 +154,12 @@ min_white_margin(gca);
 saveas(fig, 'point_sources', 'png')
 
 fig = figure;
-plot(num-1:-1:0, BIC_all, '-o', 'MarkerSize', 3)
-xlabel('Number of sources K (excluding the background)')
+plot(num:-1:1, BIC_all + log(n), '-o', 'MarkerSize', 3)
+xlabel('Number of segments')
 ylabel('BIC')
 y_range = get(gca, 'ylim');
 hold on
-plot([num-index_BIC num-index_BIC],y_range, 'LineWidth', 1.5)
+plot([num-index_BIC+1 num-index_BIC+1],y_range, 'LineWidth', 1.5)
 axis tight
 position = get(gcf, 'Position');
 % shrink width and height
