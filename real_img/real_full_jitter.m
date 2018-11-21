@@ -1,4 +1,4 @@
-function impute_log_int = real_full_jitter(seed)
+function [impute_log_int, n_region] = real_full_jitter(seed)
 rng(seed)
 
 load('real_full_result_2018_11_1_23_4_37.mat')
@@ -81,8 +81,10 @@ selected = sets_all{index_BIC};
 num = length(selected);
 % Log intensity of all resampled Voronoi cells.
 log_int_all = zeros(length(cx), 1);
+n_region = 0;
 for i = 1:num
     if ~isempty(selected{i})
+        n_region = n_region + 1;
         area = sum(cell_area(selected{i}));
         log_int = log(sum(exp(cell_log_intensity(selected{i})).*cell_area(selected{i}))/area);
         log_int_all(selected{i}) = log_int;
