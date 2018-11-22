@@ -4,6 +4,8 @@ function [invalid, valid] = get_invalid_cells(cell_log_intensity, adj_mat, n)
 
 invalid = find(isnan(cell_log_intensity));
 valid = setdiff(1:n, invalid)';
+% subset adj_mat to discard invalid
+adj_mat = adj_mat(valid, valid);
 
 %constr_graph = graph(adj_mat);
 %components = conncomp(constr_graph, 'OutputForm', 'cell');
@@ -19,6 +21,7 @@ valid = setdiff(1:n, invalid)';
 adj_mat = sparse(adj_mat) + speye(size(adj_mat, 1));
 [p, ~, r, ~] = dmperm(adj_mat);
 num_comps = length(r) - 1;
+disp(['There are ', num2str(num_comps), ' connected components in the graph.'])
 comp_size = zeros(num_comps, 1);
 components = cell(num_comps, 1);
 for i = 1:num_comps
@@ -30,7 +33,9 @@ for i = 1:num_comps
     % the connected components that have size smaller than the largest size
     % are supposed to be isolated
     if comp_size(i) < max_comp_size
-        isolated_cells = components{i};
+        % need to convert back to the original cell index
+        isolated_cells = valid(components{i});
+        disp(['Drop ', num2str(length(isolated_cells)), ' isolated cells.'])
         invalid = [invalid; isolated_cells];
         valid = setdiff(valid, isolated_cells);
     end
