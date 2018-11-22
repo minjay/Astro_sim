@@ -1,3 +1,6 @@
+addpath(genpath('/home/minjay/G-SRG'))
+addpath(genpath('/home/minjay/Astro_sim'))
+
 loc = [0.5 0.5; 0.4 0.4; 0.4 0.6; 0.6 0.4; 0.6 0.6];
 radius = [0.25 0.025*ones(1, 4)];
 base_num_in_circle = [10 ones(1, 4)];
