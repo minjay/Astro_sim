@@ -14,3 +14,8 @@ colormap(jet)
 axis image
 min_white_margin(gca);
 saveas(fig, 'log_boot_std', 'png')
+
+histogram(n_region, 10)
+xlabel('Number of segments')
+ylabel('Frequency')
+min_white_margin(gca);
