@@ -11,7 +11,8 @@ function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt] = get_seeds_sim_local_max
 % en_y: the end value of y
 % step_x: the step size of x
 % step_y: the step size of y
-% set_size: the size of each seed set, which is uniformly spreaded in the region
+% set_size: the size of each seed set. It cannot be too large otherwise
+% the seed set would spread out too much.
 % cell_log_intensity: the log intensity of voronoi cells
 % cell_area: the area of voronoi cells
 % cx: the x coordinate of points
@@ -89,6 +90,8 @@ for i = unselected_points
     dist = (cx(valid)-x).^2+(cy(valid)-y).^2;
     % sort them ascendingly
     [~, index] = sort(dist);
+    % if the current point is a local maximum and none of the points in the 
+    % candidate seed set has been selected before
     if cell_log_intensity(i)>=max(cell_log_intensity(valid(index(1:k)))) && ...
             isempty(intersect(valid(index(1:set_size2)), setdiff(1:n, unselected_points)))
         num_s_pt = num_s_pt+1;
