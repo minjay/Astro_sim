@@ -15,7 +15,8 @@ valid = setdiff(1:n, invalid)';
 % graph function is not available before R2015b.
 % instead, following 
 % https://blogs.mathworks.com/steve/2007/03/20/connected-component-labeling-part-3/
-adj_mat = adj_mat + eye(size(adj_mat, 1));
+% use sparse matrix to save memory for ultra-large matrix
+adj_mat = sparse(adj_mat) + speye(size(adj_mat, 1));
 [p, ~, r, ~] = dmperm(adj_mat);
 num_comps = length(r) - 1;
 comp_size = zeros(num_comps, 1);
