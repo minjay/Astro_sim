@@ -29,12 +29,14 @@ for i = 1:num_comps
     components{i} = p(r(i):r(i + 1) - 1);
 end
 max_comp_size = max(comp_size);
+% since valid could be changed, make a copy of it
+valid_tmp = valid;
 for i = 1:num_comps
     % the connected components that have size smaller than the largest size
     % are supposed to be isolated
     if comp_size(i) < max_comp_size
         % need to convert back to the original cell index
-        isolated_cells = valid(components{i});
+        isolated_cells = valid_tmp(components{i});
         disp(['Drop ', num2str(length(isolated_cells)), ' isolated cells.'])
         invalid = [invalid; isolated_cells];
         valid = setdiff(valid, isolated_cells);
