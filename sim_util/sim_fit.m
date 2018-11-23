@@ -28,6 +28,7 @@ if length(labeled_cells) + length(invalid) < n
     hold on
     plot(cx(dropped_cells), cy(dropped_cells), 'ro')
     saveas(fig, ['debug_', num2str(factor), '_', num2str(sample_factor), '_', num2str(seed)], 'png')
+    save(['debug_', num2str(factor), '_', num2str(sample_factor), '_', num2str(seed), '.mat'])
 end
 
 [sets_all, log_like_all] = merge_region(num, cell_area, ...
