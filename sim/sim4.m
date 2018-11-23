@@ -8,6 +8,7 @@ for i = 1:length(factors)
     for j = 1:length(sample_factors)
         index = index + 1;
         sample_factor = sample_factors(j);
+        disp(['factor=', num2str(factor), ',sample_factor=', num2str(sample_factor), ',seed=', num2str(seed)])
         % generate simulated data (inhomogeneous Poisson point process)
         X = sim_inhomo_Pois_const([0 1], [0 1], sample_factor * lambda, loc, radius, sample_factor * factor * base_num_in_circle, seed);
 
