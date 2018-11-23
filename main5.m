@@ -9,14 +9,16 @@ GRAY = [0.6 0.6 0.6];
 
 range_x = [0.2 0.4; 0.4 0.6; 0.6 0.8];
 range_y = [0.2 0.4; 0.2 0.8; 0.6 0.8];
-num = [50 150 50];
+base_num_in_L_shape = [2 6 2];
+base_num_in_circle = ones(1, 3);
+factor = 30;
+lambda = 1000;
 % generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_const_L_shape(range_x, range_y, num, 0);
+X = sim_inhomo_Pois_const_L_shape(range_x, range_y, factor * base_num_in_L_shape, 1);
 
 loc = [0.35 0.3; 0.5 0.5; 0.65 0.7];
 radius = [0.025 0.025 0.025];
-num = [25 25 25];
-X = [X; sim_inhomo_Pois_const([0 1], [0 1], 1000, loc, radius, num)];
+X = [X; sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, factor * base_num_in_circle)];
 
 h = figure;
 
@@ -43,7 +45,7 @@ plot([range_x(1, 2) range_x(1, 2)], [range_y(1, 2) range_y(3, 2)], 'k', 'LineWid
 plot([range_x(2, 2) range_x(2, 2)], [range_y(1, 1) range_y(3, 1)], 'k', 'LineWidth', 1)
 
 subplot(2, 3, 2)
-scatter(X(:, 1), X(:, 2), 'k.')
+scatter(X(:, 1), X(:, 2), '.')
 axis square
 box on
 title('(b) Simulated Data')
