@@ -38,6 +38,7 @@ for i = 1:num
 end
 
 if show_plot
+    figure
     GRAY = [0.6 0.6 0.6];
     colors = lines(n_region);
     triplot(DT, 'Color', GRAY)
