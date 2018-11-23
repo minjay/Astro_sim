@@ -16,7 +16,7 @@ for i = 1:length(factors)
         X = [X; sim_inhomo_Pois_const([0 1], [0 1], sample_factor * lambda,...
             loc, radius, sample_factor * factor * base_num_in_circle)];
 
-        [labeled_cells, pred_class_all, n_region(index)] = sim_fit(X, false);
+        [labeled_cells, pred_class_all, n_region(index)] = sim_fit(X, factor, sample_factor, seed, false);
 
         true_class_all = evaluate_points_sim5(X, range_x, range_y, loc, radius);
         % only care about labeled cells

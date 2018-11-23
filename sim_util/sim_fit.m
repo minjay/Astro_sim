@@ -1,4 +1,4 @@
-function [labeled_cells, pred_class_all, n_region] = sim_fit(X, show_plot)
+function [labeled_cells, pred_class_all, n_region] = sim_fit(X, factor, sample_factor, seed, show_plot)
 % fit the model in simulation
 
 % init comp
@@ -19,6 +19,10 @@ region_sets = seeds_all;
 
 % graph-based SRG
 [region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid');
+
+if length(labeled_cells) + length(invalid) < n
+    disp(['Premature termination happened at factor=', num2str(factor), ',sample_factor=', num2str(sample_factor), ',seed=', num2str(seed)])
+end
 
 [sets_all, log_like_all] = merge_region(num, cell_area, ...
     cell_log_intensity, region_sets, adj_mat, n);
