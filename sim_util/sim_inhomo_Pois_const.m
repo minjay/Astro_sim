@@ -35,7 +35,7 @@ X = sim_homo_Pois(range_x, range_y, lambda);
 % number of sources
 n_s = length(radius);
 
-max_iter = max(num)*2;
+max_iter = max(num)*10;
 for i = 1:n_s
     rand_num = rand(max_iter, 2);
     % generate random points within the square
