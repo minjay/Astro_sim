@@ -21,7 +21,13 @@ region_sets = seeds_all;
 [region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid');
 
 if length(labeled_cells) + length(invalid) < n
+    dropped_cells = setdiff(setdiff(1:n, labeled_cells), invalid);
     disp(['Premature termination happened at factor=', num2str(factor), ',sample_factor=', num2str(sample_factor), ',seed=', num2str(seed)])
+    fig = figure;
+    plot(cx, cy, '.')
+    hold on
+    plot(cx(dropped_cells), cy(dropped_cells), 'ro')
+    saveas(fig, ['debug_', num2str(factor), '_', num2str(sample_factor), '_', num2str(seed)], 'png')
 end
 
 [sets_all, log_like_all] = merge_region(num, cell_area, ...
