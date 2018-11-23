@@ -8,9 +8,11 @@ GRAY = [0.6 0.6 0.6];
 
 loc = [0.5 0.5; 0.4 0.4; 0.4 0.6; 0.6 0.4; 0.6 0.6];
 radius = [0.25 0.025*ones(1, 4)];
-num = [250 25*ones(1, 4)];
+base_num_in_circle = [10 ones(1, 4)];
+factor = 30;
+lambda = 1000;
 % generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_const([0 1], [0 1], 1000, loc, radius, num, 0);
+X = sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, factor * base_num_in_circle, 1);
 
 h = figure;
 
@@ -26,7 +28,7 @@ box on
 title('(a) True')
 
 subplot(2, 3, 2)
-scatter(X(:, 1), X(:, 2), 'k.')
+scatter(X(:, 1), X(:, 2), '.')
 axis square
 box on
 title('(b) Simulated Data')
