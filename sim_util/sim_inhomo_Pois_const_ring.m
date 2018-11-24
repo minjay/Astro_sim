@@ -1,4 +1,4 @@
-function X = sim_inhomo_Pois_const_ring(range_x, range_y, lambda, loc, radius_out, radius_in, num, seed, show_plot)
+function X = sim_inhomo_Pois_const_ring(loc, radius_out, radius_in, num, seed, show_plot)
 % simulate an inhomogeneous Poisson process with several homogeneous, 
 % ring-shaped extended sources
 % 
@@ -22,16 +22,16 @@ function X = sim_inhomo_Pois_const_ring(range_x, range_y, lambda, loc, radius_ou
 %
 % X = sim_inhomo_Pois_const([0 1], [0 1], 100, [0.3 0.3; 0.7 0.7], [0.1 0.1], [100 100]);
 
-if nargin==7
+if nargin==4
     show_plot = false;
-elseif nargin==8
+elseif nargin==5
     rng(seed)
     show_plot = false;
-elseif nargin==9
+elseif nargin==6
     rng(seed)
 end
 
-X = sim_homo_Pois(range_x, range_y, lambda);
+X = [];
 
 % number of sources
 n_s = length(radius_out);
