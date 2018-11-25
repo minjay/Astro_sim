@@ -66,8 +66,6 @@ region_sets = seeds_all;
 % graph-based SRG
 [region_sets, labeled_cells] = SRG_graph(region_sets, cell_log_intensity, cell_area, n, adj_mat, invalid');
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 [sets_all, log_like_all] = merge_region(num, cell_area, ...
     cell_log_intensity, region_sets, adj_mat, n);
 
