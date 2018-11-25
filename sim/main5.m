@@ -1,6 +1,4 @@
-% numerical experiment 5
-% several point sources on an extended source
-% L-shaped extended source
+% Z-shaped extended source
 
 clear
 close all
@@ -9,17 +7,18 @@ GRAY = [0.6 0.6 0.6];
 
 range_x = [0.2 0.4; 0.4 0.6; 0.6 0.8];
 range_y = [0.2 0.4; 0.2 0.8; 0.6 0.8];
+loc = [0.35 0.3; 0.5 0.5; 0.65 0.7];
+radius = [0.025 0.025 0.025];
+
 base_num_in_L_shape = [2 6 2];
 base_num_in_circle = ones(1, 3);
+
 factor = 30;
 sample_factor = 1;
 lambda = 1000;
 seed = 1;
-% generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_const_L_shape(range_x, range_y, factor * base_num_in_L_shape, seed);
 
-loc = [0.35 0.3; 0.5 0.5; 0.65 0.7];
-radius = [0.025 0.025 0.025];
+X = sim_inhomo_Pois_const_L_shape(range_x, range_y, factor * base_num_in_L_shape, seed);
 X = [X; sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, factor * base_num_in_circle)];
 
 h = figure;
@@ -27,20 +26,9 @@ h = figure;
 subplot = @(m,n,p) subtightplot (m, n, p, [0.01 0.05], [0.05 0.02], [0.05 0.02]);
 
 subplot(1, 3, 1)
-for i = 1:length(radius)
-    viscircles(loc(i, :), radius(i), 'EdgeColor', GRAY, 'LineWidth', 1);
-end
+plot_circles(loc, radius)
 hold on
-% horizontal lines
-for i = 1:3
-    plot(range_x(i, :), [range_y(i, 1) range_y(i, 1)], 'Color', GRAY, 'LineWidth', 1)
-    plot(range_x(i, :), [range_y(i, 2) range_y(i, 2)], 'Color', GRAY, 'LineWidth', 1)
-end
-% vertical lines
-plot([range_x(1, 1) range_x(1, 1)], range_y(1, :), 'Color', GRAY, 'LineWidth', 1)
-plot([range_x(3, 2) range_x(3, 2)], range_y(3, :), 'Color', GRAY, 'LineWidth', 1)
-plot([range_x(1, 2) range_x(1, 2)], [range_y(1, 2) range_y(3, 2)], 'Color', GRAY, 'LineWidth', 1)
-plot([range_x(2, 2) range_x(2, 2)], [range_y(1, 1) range_y(3, 1)], 'Color', GRAY, 'LineWidth', 1)
+plot_zshape(range_x, range_y)
 scatter(X(:, 1), X(:, 2), 'k.')
 axis([0 1 0 1])
 axis square
@@ -59,20 +47,9 @@ disp(['Number of regions is ', num2str(num)])
 
 % plot the seeds
 subplot(1, 3, 2)
-triplot(DT, 'Color', GRAY)
-hold on
 % specify the colormap
 colors = lines(num);
-for i = 1:num_s
-    scatter(cx(seeds{i}), cy(seeds{i}), 12, colors(i, :), 's', 'filled')
-end
-for i = 1:num_s_pt
-    scatter(cx(seeds_pt{i}), cy(seeds_pt{i}), 12, colors(i + num_s, :), 'd', 'filled')
-end
-for i = 1:length(seeds_rej)
-    scatter(cx(seeds_rej{i}), cy(seeds_rej{i}), 12, 'k', '^', 'filled')
-end
-axis image
+plot_seeds(DT, cx, cy, seeds, seeds_pt, seeds_rej, colors, num_s, num_s_pt)
 
 seeds_all = [seeds seeds_pt];
 
@@ -85,38 +62,14 @@ region_sets = seeds_all;
 [sets_all, log_like_all] = merge_region(num, cell_area, ...
     cell_log_intensity, region_sets, adj_mat, n);
 
-%figure
-%plot(log_like_all, '-o')
-
 BIC_all = -2*log_like_all+4*(num-1:-1:0)'*log(n);
 [min_BIC, index_BIC] = min(BIC_all);
 
 subplot(1, 3, 3)
-triplot(DT, 'Color', GRAY)
+plot_segmentation(DT, index_BIC, sets_all, cx, cy, colors)
 hold on
-% the final result
-selected = sets_all{index_BIC};
-index = 0;
-for i = 1:num
-    if ~isempty(selected{i})
-        index = index+1;
-        scatter(cx(selected{i}), cy(selected{i}), 12,  colors(index, :), 'filled')
-    end
-end
+plot_circles(loc, radius)
+plot_zshape(range_x, range_y)
 axis image
-hold on
-for i = 1:length(radius)
-    viscircles(loc(i, :), radius(i), 'EdgeColor', GRAY, 'LineWidth', 1, 'EnhanceVisibility', false);
-end
-% horizontal lines
-for i = 1:3
-    plot(range_x(i, :), [range_y(i, 1) range_y(i, 1)], 'Color', GRAY, 'LineWidth', 1)
-    plot(range_x(i, :), [range_y(i, 2) range_y(i, 2)], 'Color', GRAY, 'LineWidth', 1)
-end
-% vertical lines
-plot([range_x(1, 1) range_x(1, 1)], range_y(1, :), 'Color', GRAY, 'LineWidth', 1)
-plot([range_x(3, 2) range_x(3, 2)], range_y(3, :), 'Color', GRAY, 'LineWidth', 1)
-plot([range_x(1, 2) range_x(1, 2)], [range_y(1, 2) range_y(3, 2)], 'Color', GRAY, 'LineWidth', 1)
-plot([range_x(2, 2) range_x(2, 2)], [range_y(1, 1) range_y(3, 1)], 'Color', GRAY, 'LineWidth', 1)
 
 set(h, 'Position', [0, 0, 800, 250]);

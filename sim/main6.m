@@ -1,6 +1,4 @@
-% numerical experiment 6
-% several point sources on an extended source
-% ring-shaped extended source
+% Arc-shaped extended source
 
 clear
 close all
@@ -8,20 +6,20 @@ close all
 GRAY = [0.6 0.6 0.6];
 
 loc_ring = [0.3 0.5];
-radius_out = 0.4;
 radius_in = 0.2;
-base_num_in_ring = 10;
-
+radius_out = 0.4;
 loc = [0.5 0.7; 0.6 0.5; 0.5 0.3];
 radius = 0.025*ones(1, 3);
+
+base_num_in_ring = 10;
 base_num_in_circle = ones(1, 3);
-lambda = 1000;
+
 factor = 30;
 sample_factor = 1;
+lambda = 1000;
 seed = 1;
-% generate simulated data (inhomogeneous Poisson point process)
-X = sim_inhomo_Pois_const_ring(loc_ring, radius_out, radius_in, factor * base_num_in_ring, seed);
 
+X = sim_inhomo_Pois_const_ring(loc_ring, radius_out, radius_in, factor * base_num_in_ring, seed);
 X = [X; sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, factor * base_num_in_circle)];
 
 h = figure;
@@ -29,15 +27,9 @@ h = figure;
 subplot = @(m,n,p) subtightplot (m, n, p, [0.01 0.05], [0.05 0.02], [0.05 0.02]);
 
 subplot(1, 3, 1)
-for i = 1:length(radius)
-    viscircles(loc(i, :), radius(i), 'EdgeColor', GRAY, 'LineWidth', 1);
-end
-
+plot_circles(loc, radius)
 hold on
-ang(loc_ring, radius_out, [-pi/2 pi/2], GRAY, 1);
-ang(loc_ring, radius_in, [-pi/2 pi/2], GRAY, 1);
-plot([loc_ring(1) loc_ring(1)], [loc_ring(2)-radius_out loc_ring(2)-radius_in], 'Color', GRAY, 'LineWidth', 1)
-plot([loc_ring(1) loc_ring(1)], [loc_ring(2)+radius_in loc_ring(2)+radius_out], 'Color', GRAY, 'LineWidth', 1)
+plot_arc(loc_ring, radius_in, radius_out)
 scatter(X(:, 1), X(:, 2), 'k.')
 axis([0 1 0 1])
 axis square
@@ -56,20 +48,9 @@ disp(['Number of regions is ', num2str(num)])
 
 % plot the seeds
 subplot(1, 3, 2)
-triplot(DT, 'Color', GRAY)
-hold on
 % specify the colormap
 colors = lines(num);
-for i = 1:num_s
-    scatter(cx(seeds{i}), cy(seeds{i}), 12, colors(i, :), 's', 'filled')
-end
-for i = 1:num_s_pt
-    scatter(cx(seeds_pt{i}), cy(seeds_pt{i}), 12, colors(i + num_s, :), 'd', 'filled')
-end
-for i = 1:length(seeds_rej)
-    scatter(cx(seeds_rej{i}), cy(seeds_rej{i}), 12, 'k', '^', 'filled')
-end
-axis image
+plot_seeds(DT, cx, cy, seeds, seeds_pt, seeds_rej, colors, num_s, num_s_pt)
 
 seeds_all = [seeds seeds_pt];
 
@@ -82,32 +63,14 @@ region_sets = seeds_all;
 [sets_all, log_like_all] = merge_region(num, cell_area, ...
     cell_log_intensity, region_sets, adj_mat, n);
 
-%figure
-%plot(log_like_all, '-o')
-
 BIC_all = -2*log_like_all+4*(num-1:-1:0)'*log(n);
 [min_BIC, index_BIC] = min(BIC_all);
 
 subplot(1, 3, 3)
-triplot(DT, 'Color', GRAY)
+plot_segmentation(DT, index_BIC, sets_all, cx, cy, colors)
 hold on
-% the final result
-selected = sets_all{index_BIC};
-index = 0;
-for i = 1:num
-    if ~isempty(selected{i})
-        index = index+1;
-        scatter(cx(selected{i}), cy(selected{i}), 12,  colors(index, :), 'filled')
-    end
-end
+plot_circles(loc, radius)
+plot_arc(loc_ring, radius_in, radius_out)
 axis image
-hold on
-for i = 1:length(radius)
-    viscircles(loc(i, :), radius(i), 'EdgeColor', GRAY, 'LineWidth', 1, 'EnhanceVisibility', false);
-end
-ang(loc_ring, radius_out, [-pi/2 pi/2], GRAY, 1);
-ang(loc_ring, radius_in, [-pi/2 pi/2], GRAY, 1);
-plot([loc_ring(1) loc_ring(1)], [loc_ring(2)-radius_out loc_ring(2)-radius_in], 'Color', GRAY, 'LineWidth', 1)
-plot([loc_ring(1) loc_ring(1)], [loc_ring(2)+radius_in loc_ring(2)+radius_out], 'Color', GRAY, 'LineWidth', 1)
 
 set(h, 'Position', [0, 0, 800, 250]);
