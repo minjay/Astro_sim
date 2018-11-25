@@ -14,5 +14,5 @@ rho = ones(1,100) * radius;
 [x,y] = pol2cart(theta,rho);
 x = x + centre(1);
 y = y + centre(2);
-h = plot(x,y,style,'LineWidth',width);
+h = plot(x,y,'Color',style,'LineWidth',width);
 end
