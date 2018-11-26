@@ -1,21 +1,30 @@
 load('real_full_result_2018_11_1_23_4_37.mat')
 
-% plot the seeds
+% plot the data
+fig = figure;
+scatter(X(:, 1), X(:, 2), 'k.')
+axis image
+box on
+min_white_margin(gca);
+saveas(fig, 'data', 'png')
+
+adj_mat = get_adj_mat( E, n );
+% plot the log intensity
 fig = figure;
 triplot(DT, 'Color', GRAY)
 hold on
-% specify the colormap
-colors = lines(num_s);
-for i = 1:num_s
-    scatter(cx(seeds{i}), cy(seeds{i}), 12, colors(i, :), 's', 'filled')
-end
-for i = 1:num_s_pt
-    scatter(cx(seeds_pt{i}), cy(seeds_pt{i}), 12, 'r', 'd', 'filled')
-end
-for i = 1:length(seeds_rej)
-    scatter(cx(seeds_rej{i}), cy(seeds_rej{i}), 12, 'k', '^', 'filled')
-end
+[invalid, valid] = get_invalid_cells(cell_log_intensity, adj_mat, n);
+scatter(cx(valid), cy(valid), 12, cell_log_intensity(valid), 'filled')
+colorbar
+colormap(jet)
 axis image
+min_white_margin(gca);
+saveas(fig, 'log_intensity', 'png')
+
+% plot the seeds
+fig = figure;
+colors = lines(num);
+plot_seeds(DT, cx, cy, seeds, seeds_pt, seeds_rej, colors, num_s, num_s_pt)
 min_white_margin(gca);
 saveas(fig, 'seeds', 'png')
 
@@ -72,64 +81,73 @@ for j = 1:num_nonempty
 end
 
 fig = figure;
-plot(cx, cy, '.')
+scatter(cx, cy, 3, repmat(GRAY, length(cx), 1), 'filled')
+
 hold on
 for j = 1:num_nonempty
-    line(vx_edges_all{j}, vy_edges_all{j}, 'color', 'r')
+    % original red is brighter
+    line(vx_edges_all{j}, vy_edges_all{j}, 'Color', 'r')
 end
 axis image
 
 left_corner1 = [0.2 0.45];
 right_corner1 = [0.45 0.6];
-rectangle('Position', [left_corner1 right_corner1 - left_corner1])
-text(left_corner1(1), right_corner1(2)+0.01, 'Region 1')
+rectangle('Position', [left_corner1 right_corner1 - left_corner1], 'LineWidth', 1)
+text(left_corner1(1), right_corner1(2)+0.02, 'Region 1', 'FontSize', 16)
 
 left_corner2 = [0.5 0.35];
 right_corner2 = [0.75 0.6];
-rectangle('Position', [left_corner2 right_corner2 - left_corner2])
-text(left_corner2(1), right_corner2(2)+0.01, 'Region 2')
+rectangle('Position', [left_corner2 right_corner2 - left_corner2], 'LineWidth', 1)
+text(left_corner2(1), right_corner2(2)+0.02, 'Region 2', 'FontSize', 16)
 
 left_corner3 = [0.3 0.05];
 right_corner3 = [0.55 0.2];
-rectangle('Position', [left_corner3 right_corner3 - left_corner3])
-text(left_corner3(1), right_corner3(2)+0.01, 'Region 3')
+rectangle('Position', [left_corner3 right_corner3 - left_corner3], 'LineWidth', 1)
+text(left_corner3(1), right_corner3(2)+0.02, 'Region 3', 'FontSize', 16)
 
+box on
 min_white_margin(gca);
 saveas(fig, 'segment_result', 'png')
 
 fig = figure;
-plot(cx, cy, '.')
+scatter(cx, cy, 10, repmat(GRAY, length(cx), 1), 'filled')
 hold on
 for j = 1:num_nonempty
-    line(vx_edges_all{j}, vy_edges_all{j}, 'color', 'r')
+    line(vx_edges_all{j}, vy_edges_all{j}, 'Color', 'r', 'LineWidth', 1)
 end
 axis image
 axis([left_corner1(1) right_corner1(1) left_corner1(2) right_corner1(2)])
 title('Region 1')
+set(gca, 'FontSize', 18)
+box on
 min_white_margin(gca);
 saveas(fig, 'region1', 'png')
 
 fig = figure;
-plot(cx, cy, '.')
+scatter(cx, cy, 10, repmat(GRAY, length(cx), 1), 'filled')
 hold on
 for j = 1:num_nonempty
-    line(vx_edges_all{j}, vy_edges_all{j}, 'color', 'r')
+    line(vx_edges_all{j}, vy_edges_all{j}, 'Color', 'r', 'LineWidth', 1)
 end
 axis image
 axis([left_corner2(1) right_corner2(1) left_corner2(2) right_corner2(2)])
 title('Region 2')
+set(gca, 'FontSize', 18)
+box on
 min_white_margin(gca);
 saveas(fig, 'region2', 'png')
 
 fig = figure;
-plot(cx, cy, '.')
+scatter(cx, cy, 10, repmat(GRAY, length(cx), 1), 'filled')
 hold on
 for j = 1:num_nonempty
-    line(vx_edges_all{j}, vy_edges_all{j}, 'color', 'r')
+    line(vx_edges_all{j}, vy_edges_all{j}, 'Color', 'r', 'LineWidth', 1)
 end
 axis image
 axis([left_corner3(1) right_corner3(1) left_corner3(2) right_corner3(2)])
 title('Region 3')
+set(gca, 'FontSize', 18)
+box on
 min_white_margin(gca);
 saveas(fig, 'region3', 'png')
 
