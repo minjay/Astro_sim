@@ -16,7 +16,7 @@ base_num_in_circle = ones(1, 3);
 factor = 30;
 sample_factor = 1;
 lambda = 1000;
-seed = 1;
+seed = 0;
 
 X = sim_inhomo_Pois_const_L_shape(range_x, range_y, factor * base_num_in_L_shape, seed);
 X = [X; sim_inhomo_Pois_const([0 1], [0 1], lambda, loc, radius, factor * base_num_in_circle)];
