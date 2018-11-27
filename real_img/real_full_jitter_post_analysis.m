@@ -23,6 +23,6 @@ counts = histc(n_region, unique_n_region);
 % use percentage instead of count
 bar(unique_n_region, counts / sum(counts), 'FaceColor', GRAY)
 xlabel('Number of segments')
-ylabel('Frequency')
+ylabel('Percentage')
 set(gca, 'FontSize', 16)
 min_white_margin(gca, 0, 0, 0.01);
