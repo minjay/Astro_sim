@@ -134,6 +134,7 @@ axis([left_corner2(1) right_corner2(1) left_corner2(2) right_corner2(2)])
 title('Region 2')
 set(gca, 'FontSize', 18)
 box on
+set(fig, 'Position', [0, 0, 425, 400]);
 min_white_margin(gca);
 saveas(fig, 'region2', 'png')
 
