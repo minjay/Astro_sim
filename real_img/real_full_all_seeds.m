@@ -73,6 +73,8 @@ disp(['Elapsed time is ', num2str(elapsed_time), ' seconds.'])
 
 % save all variables (exclude figure handle)
 clear fig
+% it is too long to save
+clear sets_all
 filename = 'real_full_all_seeds_result';
 current_datetime = clock;
 for i = current_datetime
