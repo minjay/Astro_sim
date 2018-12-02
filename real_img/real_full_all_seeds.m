@@ -45,11 +45,11 @@ disp('Region merging...')
 [sets_all, log_like_all] = merge_region_fast(num_region, region_area, ...
     region_intensity, region_sets, adj_mat(valid, valid), region_num_cells, n);
 
-BIC_all = -2*log_like_all+6*(num-1:-1:0)'*log(n);
+BIC_all = -2*log_like_all+6*(num_region-1:-1:0)'*log(n);
 [min_BIC, index_BIC] = min(BIC_all);
 
 fig = figure;
-plot(num-1:-1:0, BIC_all, '-o', 'MarkerSize', 3)
+plot(num_region-1:-1:0, BIC_all, '-o', 'MarkerSize', 3)
 saveas(fig, 'BIC', 'png')
 
 fig = figure;
@@ -57,7 +57,7 @@ triplot(DT, 'Color', GRAY)
 hold on
 % the final result
 selected = sets_all{index_BIC};
-for i = 1:num
+for i = 1:num_region
     if ~isempty(selected{i})
         log_int = log(sum(exp(cell_log_intensity(selected{i})).*cell_area(selected{i}))/sum(cell_area(selected{i})));
         scatter(cx(selected{i}), cy(selected{i}), 12, log_int*ones(length(selected{i}), 1), 'filled')
