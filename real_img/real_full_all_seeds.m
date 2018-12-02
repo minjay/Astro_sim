@@ -42,6 +42,8 @@ num_region = length(region_sets);
 region_num_cells = ones(num_region, 1);
 
 disp('Region merging...')
+% TODO: Only return the best segmentation result instead of all
+% segmentation history.
 [sets_all, log_like_all] = merge_region_fast(num_region, region_area, ...
     region_intensity, region_sets, adj_mat(valid, valid), region_num_cells, n);
 
