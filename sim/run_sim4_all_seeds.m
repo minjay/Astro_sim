@@ -11,7 +11,7 @@ T = 500;
 metrics = zeros(length(factors) * length(sample_factors), T);
 n_region = zeros(length(factors) * length(sample_factors), T);
 parfor seed = 1:T
-    [metrics(:, seed), n_region(:, seed)] = sim4(loc, radius, base_num_in_circle, factors, lambda, sample_factors, seed);
+    [metrics(:, seed), n_region(:, seed)] = sim4_all_seeds(loc, radius, base_num_in_circle, factors, lambda, sample_factors, seed);
 end
 save('sim4_result.mat')
    
