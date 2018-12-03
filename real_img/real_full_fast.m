@@ -111,8 +111,10 @@ saveas(fig, 'over_seg', 'png')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 disp('Region merging...')
-[sets_all, log_like_all] = merge_region(num, cell_area, ...
-    cell_log_intensity, region_sets, adj_mat, n);
+[region_intensity, region_area, region_num_cells, adj_mat_region] =...
+    get_region_int_connect(num, cell_area, cell_log_intensity, region_sets, adj_mat);
+[sets_all, log_like_all] = merge_region_fast(num, region_area, ...
+    region_intensity, region_sets, adj_mat_region, region_num_cells, n);
 
 %figure
 %plot(log_like_all, '-o')
