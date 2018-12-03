@@ -147,7 +147,7 @@ disp(['Elapsed time is ', num2str(elapsed_time), ' seconds.'])
 
 % save all variables (exclude figure handle)
 clear fig
-filename = 'real_full_result';
+filename = 'real_full_fast_result';
 current_datetime = clock;
 for i = current_datetime
     filename = [filename, '_', num2str(fix(i))];
