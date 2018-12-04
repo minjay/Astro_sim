@@ -190,11 +190,30 @@ triplot(DT, 'Color', GRAY)
 hold on
 % the final result
 selected = sets_all{index_BIC};
-for i = 1:num
+
+index = 0;
+selected_nonempty = {};
+for i = 1:length(selected)
     if ~isempty(selected{i})
-        log_int = log(sum(exp(cell_log_intensity(selected{i})).*cell_area(selected{i}))/sum(cell_area(selected{i})));
-        scatter(cx(selected{i}), cy(selected{i}), 12, log_int*ones(length(selected{i}), 1), 'filled')
+        index = index + 1;
+        selected_nonempty{index} = selected{i};
     end
+end
+
+for i = 1:length(selected_nonempty)-1
+    for j = i+1:length(selected_nonempty)
+        % sorted by area from the largest to the smallest
+        if sum(cell_area(selected_nonempty{i})) < sum(cell_area(selected_nonempty{j}))
+            tmp = selected_nonempty{i};
+            selected_nonempty{i} = selected_nonempty{j};
+            selected_nonempty{j} = tmp;
+        end
+    end
+end
+
+for i = 1:length(selected_nonempty)
+    log_int = log(sum(exp(cell_log_intensity(selected_nonempty{i})).*cell_area(selected_nonempty{i}))/sum(cell_area(selected_nonempty{i})));
+    scatter(cx(selected_nonempty{i}), cy(selected_nonempty{i}), 12, log_int*ones(length(selected_nonempty{i}), 1), 'filled')
 end
 colorbar('EastOutside')
 colormap(hsv)
