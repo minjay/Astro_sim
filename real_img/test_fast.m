@@ -29,3 +29,27 @@ end
 assert(length(selected_nonempty) == length(selected_fast_nonempty))
 
 assert(all(sort(selected_size) == sort(selected_fast_size)))
+
+for i = 1:length(selected_nonempty)-1
+    for j = i+1:length(selected_nonempty)
+        if length(selected_nonempty{i}) > length(selected_nonempty{j})
+            tmp = selected_nonempty{i};
+            selected_nonempty{i} = selected_nonempty{j};
+            selected_nonempty{j} = tmp;
+        end
+    end
+end
+
+for i = 1:length(selected_fast_nonempty)-1
+    for j = i+1:length(selected_fast_nonempty)
+        if length(selected_fast_nonempty{i}) > length(selected_fast_nonempty{j})
+            tmp = selected_fast_nonempty{i};
+            selected_fast_nonempty{i} = selected_fast_nonempty{j};
+            selected_fast_nonempty{j} = tmp;
+        end
+    end
+end
+
+for i = 1:length(selected_nonempty)
+    assert(all(sort(selected_nonempty{i}) == sort(selected_fast_nonempty{i})))
+end
