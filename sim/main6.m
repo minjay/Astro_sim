@@ -34,6 +34,7 @@ scatter(X(:, 1), X(:, 2), 'k.')
 axis([0 1 0 1])
 axis square
 box on
+set(gca, 'fontsize', 12)
 
 % init comp
 [cx, cy, n, DT, E, cell_log_intensity, cell_area] = init_comp(X, [0 1], [0 1], ones(size(X, 1), 1));
@@ -51,6 +52,7 @@ subplot(1, 3, 2)
 % specify the colormap
 colors = lines(num);
 plot_seeds(DT, cx, cy, seeds, seeds_pt, seeds_rej, colors, num_s, num_s_pt)
+set(gca, 'fontsize', 12)
 
 seeds_all = [seeds seeds_pt];
 
@@ -72,5 +74,6 @@ hold on
 plot_circles(loc, radius)
 plot_arc(loc_ring, radius_in, radius_out)
 axis image
+set(gca, 'fontsize', 12)
 
-set(h, 'Position', [0, 0, 800, 250]);
+set(h, 'Position', [0, 0, 800, 260]);
