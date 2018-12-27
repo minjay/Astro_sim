@@ -5,6 +5,7 @@ fig = figure;
 scatter(X(:, 1), X(:, 2), 'k.')
 axis image
 box on
+set(gca, 'fontsize', 12)
 min_white_margin(gca);
 saveas(fig, 'data', 'png')
 
@@ -18,6 +19,7 @@ scatter(cx(valid), cy(valid), 12, cell_log_intensity(valid), 'filled')
 colorbar
 colormap(jet)
 axis image
+set(gca, 'fontsize', 14)
 min_white_margin(gca);
 saveas(fig, 'log_intensity', 'png')
 
@@ -25,6 +27,7 @@ saveas(fig, 'log_intensity', 'png')
 fig = figure;
 colors = lines(num);
 plot_seeds(DT, cx, cy, seeds, seeds_pt, seeds_rej, colors, num_s, num_s_pt)
+set(gca, 'fontsize', 14)
 min_white_margin(gca);
 saveas(fig, 'seeds', 'png')
 
@@ -89,6 +92,7 @@ for j = 1:num_nonempty
     line(vx_edges_all{j}, vy_edges_all{j}, 'Color', 'r')
 end
 axis image
+set(gca, 'fontsize', 12)
 
 left_corner1 = [0.2 0.45];
 right_corner1 = [0.45 0.6];
@@ -169,6 +173,7 @@ end
 colorbar('EastOutside')
 colormap(hsv)
 axis image
+set(gca, 'fontsize', 14)
 min_white_margin(gca);
 saveas(fig, 'point_sources', 'png')
 
@@ -218,5 +223,6 @@ end
 colorbar('EastOutside')
 colormap(hsv)
 axis image
+set(gca, 'fontsize', 12)
 min_white_margin(gca);
 saveas(fig, 'segment_result_points', 'png')
