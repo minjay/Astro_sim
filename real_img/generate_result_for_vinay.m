@@ -34,6 +34,8 @@ end
 [~, sorted_index] = sort(log_int_all, 'descend');
 selected_nonempty = selected_nonempty(sorted_index);
 
+% segment_id starts from 1. segment_id = 0 means the photon does not belong
+% to any segments. They are near the edge.
 num_segments = length(selected_nonempty);
 for segment_id = 1:num_segments
     X(selected_nonempty{segment_id}(1, :), 3) = segment_id;
