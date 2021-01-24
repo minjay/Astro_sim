@@ -1,5 +1,5 @@
 function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt] = get_seeds_sim_local_max(st_x, en_x, st_y, en_y,...
-    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2, invalid)
+    step_x, step_y, set_size, cell_log_intensity, cell_area, cx, cy, factor, k, set_size2, invalid, adj_mat)
 % get initial seeds, which are either uniformly spreaded in the region or
 % found by local maxima
 %
@@ -21,11 +21,15 @@ function [seeds, seeds_rej, seeds_pt, num_s, num_s_pt] = get_seeds_sim_local_max
 % k: number of nearest neighbors to determine local maxima
 % set_size2: the size of each seed set found by local maxima
 % invalid: the set of points that are invalid
+% adj_mat: the adjacent matrix. 1 means connected, 0 means not.
 %
 % Output variables:
 %
-% seeds: seed sets
-% num_s: the number of seed sets
+% seeds: seed sets selected uniformly (excluding those rejected)
+% seeds_rej: seed sets which are rejected
+% seeds_pt: seed sets found by local maximum
+% num_s: the number of seed sets selected uniformly (excluding those rejected)
+% num_s_pt: the number of seed sets found by local maximum
 
 n = length(cx);
 
@@ -53,14 +57,23 @@ for i = st_x:step_x:en_x
         dist = (cx(unselected_points)-i).^2+(cy(unselected_points)-j).^2;
         % sort them ascendingly
         [~, index] = sort(dist);
+        % seed rejection based on connectivity
+        % if a seed set contains points which are not connected, rejects 
+        % the entire seed set
+        candidate_seed_set = unselected_points(index(1:set_size));
+        adj_mat_seed = adj_mat(candidate_seed_set, candidate_seed_set);
+        if numel(unique(conncomp(graph(adj_mat_seed)))) > 1
+            disp('Reject seed set which is not connected')
+            continue
+        end
         num_s = num_s+1;
-        seeds{num_s} = unselected_points(index(1:set_size));
+        seeds{num_s} = candidate_seed_set;
         % remove selected points
         unselected_points = setdiff(unselected_points, seeds{num_s});
     end
 end  
 
-% seed rejection
+% seed rejection based on area after initial selection
 index = [];
 for i = 1:num_s
     areas = cell_area(seeds{i});

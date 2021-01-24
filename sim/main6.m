@@ -43,7 +43,7 @@ adj_mat = get_adj_mat( E, n );
 % get seeds
 [invalid, valid] = get_invalid_cells(cell_log_intensity, adj_mat, n);
 [seeds, seeds_rej, seeds_pt, num_s, num_s_pt] = get_seeds_sim_local_max(0.1, 0.9, 0.1, 0.9,...
-    0.2, 0.2, 5, cell_log_intensity, cell_area, cx, cy, 2, 50, 5, invalid);
+    0.2, 0.2, 5, cell_log_intensity, cell_area, cx, cy, 2, 50, 5, invalid, adj_mat);
 num = num_s+num_s_pt;
 disp(['Number of regions is ', num2str(num)])
 
