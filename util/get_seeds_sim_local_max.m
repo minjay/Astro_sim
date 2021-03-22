@@ -107,6 +107,15 @@ for i = unselected_points
     % candidate seed set has been selected before
     if cell_log_intensity(i)>=max(cell_log_intensity(valid(index(1:k)))) && ...
             isempty(intersect(valid(index(1:set_size2)), setdiff(1:n, unselected_points)))
+        % seed rejection based on connectivity
+        % if a seed set contains points which are not connected, rejects 
+        % the entire seed set
+        candidate_seed_set = unselected_points(index(1:set_size2));
+        adj_mat_seed = adj_mat(candidate_seed_set, candidate_seed_set);
+        if numel(unique(conncomp(graph(adj_mat_seed)))) > 1
+            disp('Reject seed set which is not connected')
+            continue
+        end
         num_s_pt = num_s_pt+1;
         seeds_pt{num_s_pt} = valid(index(1:set_size2));
     end
