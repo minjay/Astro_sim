@@ -63,7 +63,7 @@ for i = st_x:step_x:en_x
         candidate_seed_set = unselected_points(index(1:set_size));
         adj_mat_seed = adj_mat(candidate_seed_set, candidate_seed_set);
         if numel(unique(conncomp(graph(adj_mat_seed)))) > 1
-            disp('Reject seed set which is not connected')
+            disp('Reject seed set which is placed uniformly but not connected')
             continue
         end
         num_s = num_s+1;
@@ -113,7 +113,7 @@ for i = unselected_points
         candidate_seed_set = unselected_points(index(1:set_size2));
         adj_mat_seed = adj_mat(candidate_seed_set, candidate_seed_set);
         if numel(unique(conncomp(graph(adj_mat_seed)))) > 1
-            disp('Reject seed set which is not connected')
+            disp('Reject seed set which is local maximum but not connected')
             continue
         end
         num_s_pt = num_s_pt+1;
