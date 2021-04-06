@@ -69,7 +69,7 @@ for i = st_x:step_x:en_x
         num_s = num_s+1;
         seeds{num_s} = candidate_seed_set;
         % remove selected points
-        unselected_points = setdiff(unselected_points, seeds{num_s});
+        unselected_points = setdiff(unselected_points, candidate_seed_set);
     end
 end  
 
@@ -97,7 +97,8 @@ valid = setdiff(1:n, invalid);
 % k
 % number of nearest neighbors
 % find local maximum
-for i = unselected_points
+unselected_points_copy = unselected_points;
+for i = unselected_points_copy
     x = cx(i);
     y = cy(i);
     dist = (cx(valid)-x).^2+(cy(valid)-y).^2;
@@ -105,19 +106,21 @@ for i = unselected_points
     [~, index] = sort(dist);
     % if the current point is a local maximum and none of the points in the 
     % candidate seed set has been selected before
-    if cell_log_intensity(i)>=max(cell_log_intensity(valid(index(1:k)))) && ...
+    if cell_log_intensity(i)>max(cell_log_intensity(valid(index(2:k)))) && ...
             isempty(intersect(valid(index(1:set_size2)), setdiff(1:n, unselected_points)))
         % seed rejection based on connectivity
         % if a seed set contains points which are not connected, rejects 
         % the entire seed set
-        candidate_seed_set = unselected_points(index(1:set_size2));
+        candidate_seed_set = valid(index(1:set_size2));
         adj_mat_seed = adj_mat(candidate_seed_set, candidate_seed_set);
         if numel(unique(conncomp(graph(adj_mat_seed)))) > 1
             disp('Reject seed set which is local maximum but not connected')
             continue
         end
         num_s_pt = num_s_pt+1;
-        seeds_pt{num_s_pt} = valid(index(1:set_size2));
+        seeds_pt{num_s_pt} = candidate_seed_set;
+        % remove selected points
+        unselected_points = setdiff(unselected_points, candidate_seed_set);
     end
 end
 
